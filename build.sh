@@ -13,8 +13,8 @@ mkdir -p build/lib
 
 cp 'dev/index-dev.html' 'build/'
 # cp 'dev/i.png' 'build/'
+cp 'dev/js/lib/'*.js 'build/'
 cp 'dev/js/'*.js 'build/'
-cp 'dev/js/lib/'*.js 'build/lib/'
 
 cd 'build' > '/dev/null'
 
@@ -27,13 +27,14 @@ sed -E -i'' 's/<script src="([a-zA-Z0-9_-]+\/)+[a-zA-Z0-9_.-]{2,}\.js"><\/script
 
 # Minify and combine the JS files.
 terser \
-	'lib/ZzFXMicro.min.js' \
+	'ZzFXMicro.min.js' \
 	'js13k.js' \
 	'Assets.js' \
 	'Audio.js' \
 	'Input.js' \
 	'Renderer.js' \
 	'Level.js' \
+	'LevelObject.js' \
 	--ecma 12 --warn \
 	--compress --toplevel \
 	--mangle --mangle-props keep_quoted \

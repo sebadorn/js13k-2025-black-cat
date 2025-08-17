@@ -11,6 +11,7 @@ export default [
 			'dev/js/lib/',
 			'docs/',
 			'node_modules/',
+			'tools/',
 		],
 	},
 	{
