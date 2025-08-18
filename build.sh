@@ -35,6 +35,7 @@ terser \
 	'Renderer.js' \
 	'Level.js' \
 	'LevelObject.js' \
+	'Cat.js' \
 	--ecma 12 --warn \
 	--compress --toplevel \
 	--mangle --mangle-props keep_quoted \

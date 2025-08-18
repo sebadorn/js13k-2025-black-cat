@@ -27,29 +27,30 @@ js13k.LevelObject = class {
 	 * @param {string[]} asset.data
 	 */
 	constructor( x, y, asset ) {
+		this._asset = asset;
 		this.x = x;
 		this.y = y;
 		[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( asset.w, asset.h );
 
-		this._render( asset.data );
+		this.render();
 	}
 
 
 	/**
 	 *
-	 * @private
-	 * @param {string[]} data
+	 * @returns {number}
 	 */
-	_render( data ) {
-		data.forEach( d => {
-			const parts = d.split( ',' );
-			const type = parts[0];
+	get h() {
+		return this._asset.h;
+	}
 
-			if( type === 'fr' ) {
-				this.ctx.fillStyle = '#' + parts[5];
-				this.ctx.fillRect( parts[1], parts[2], parts[3], parts[4] );
-			}
-		} );
+
+	/**
+	 *
+	 * @returns {number}
+	 */
+	get w() {
+		return this._asset.w;
 	}
 
 
@@ -58,8 +59,26 @@ js13k.LevelObject = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
-		const absHeight = js13k.Renderer.cnv.height / js13k.Renderer.scale;
-		ctx.drawImage( this.cnv, this.x, absHeight - this.y - this.cnv.height );
+		ctx.drawImage( this.cnv, this.x, this.y );
+	}
+
+
+	/**
+	 *
+	 * @private
+	 */
+	render() {
+		this.ctx.clearRect( 0, 0, this._asset.w, this._asset.h );
+
+		this._asset.data.forEach( d => {
+			const parts = d.split( ',' );
+			const type = parts[0];
+
+			if( type === 'fr' ) {
+				this.ctx.fillStyle = '#' + parts[5];
+				this.ctx.fillRect( parts[1], parts[2], parts[3], parts[4] );
+			}
+		} );
 	}
 
 
