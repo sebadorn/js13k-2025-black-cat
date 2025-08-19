@@ -25,8 +25,10 @@ js13k.LevelObject = class {
 	 * @param {number}   asset.w
 	 * @param {number}   asset.h
 	 * @param {string[]} asset.data
+	 * @param {js13k.Level} level
 	 */
-	constructor( x, y, asset ) {
+	constructor( x, y, asset, level ) {
+		this.level = level;
 		this._asset = asset;
 		this.x = x;
 		this.y = y;
@@ -59,7 +61,25 @@ js13k.LevelObject = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
-		ctx.drawImage( this.cnv, this.x, this.y );
+		ctx.drawImage( this.cnv, this.getGlobalX(), this.getGlobalY() );
+	}
+
+
+	/**
+	 *
+	 * @returns {number}
+	 */
+	getGlobalX() {
+		return ( this.parent?.getGlobalX() || 0 ) + this.x;
+	}
+
+
+	/**
+	 *
+	 * @returns {number}
+	 */
+	getGlobalY() {
+		return ( this.parent?.getGlobalY() || 0 ) + this.y;
 	}
 
 
@@ -69,16 +89,7 @@ js13k.LevelObject = class {
 	 */
 	render() {
 		this.ctx.clearRect( 0, 0, this._asset.w, this._asset.h );
-
-		this._asset.data.forEach( d => {
-			const parts = d.split( ',' );
-			const type = parts[0];
-
-			if( type === 'fr' ) {
-				this.ctx.fillStyle = '#' + parts[5];
-				this.ctx.fillRect( parts[1], parts[2], parts[3], parts[4] );
-			}
-		} );
+		this._asset.render( this.ctx );
 	}
 
 

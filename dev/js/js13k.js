@@ -32,6 +32,18 @@ const js13k = {
 
 	/**
 	 *
+	 * @param {number} start
+	 * @param {number} target
+	 * @param {number} progress - [0.0, 1.0]
+	 * @returns {number}
+	 */
+	interpolate( start, target, progress ) {
+		return start * ( 1 - progress ) + target * progress;
+	},
+
+
+	/**
+	 *
 	 * @return {object?}
 	 */
 	loadGame() {

@@ -11,20 +11,26 @@ js13k.Level = class {
 	constructor() {
 		this.timer = 0;
 
-		this.cat = new js13k.Cat( 500, 500, js13k.Assets.graphics.cat );
+		/** @type {js13k.Cat} */
+		this.cat = new js13k.Cat( 500, 500, js13k.Assets.graphics.cat, this );
 
+		/** @type {js13k.LevelObject[]} */
 		this.background = [
-			new js13k.LevelObject( 300, 100, js13k.Assets.graphics.bookshelf ),
+			new js13k.LevelObject( 300, 300, js13k.Assets.graphics.bookshelf, this ),
 		];
 
+		/** @type {js13k.LevelObject[]} */
 		this.middleground = [
 			this.cat,
 		];
 
+		/** @type {js13k.LevelObject[]} */
 		this.foreground = [];
 
+		/** @type {Place[]} */
 		this.places = [
-			{ n: 'window', x: 800, y: 100, w: 200, h: 150 },
+			{ n: 'Window', x: 1700, y: 100, w: 200, h: 150 },
+			{ n: 'Cauldron', x: 900, y: 600, w: 400, h: 300 },
 		];
 	}
 
@@ -35,16 +41,12 @@ js13k.Level = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	_drawScenery( ctx ) {
-		const cnv = js13k.Renderer.cnv;
-		const width = cnv.width / js13k.Renderer.scale;
-		const height = cnv.height / js13k.Renderer.scale;
-
 		// Sky
 		ctx.fillStyle = '#123349';
-		ctx.fillRect( 0, 0, width, height );
+		ctx.fillRect( 0, 0, 1920, 1080 );
 		// Floor
 		ctx.fillStyle = '#3d2609';
-		ctx.fillRect( 0, height * 0.8, width, height * 0.2 );
+		ctx.fillRect( 0, 900, 1920, 180 );
 	}
 
 
@@ -57,6 +59,12 @@ js13k.Level = class {
 		this.background.forEach( obj => obj.draw( ctx ) );
 		this.middleground.forEach( obj => obj.draw( ctx ) );
 		this.foreground.forEach( obj => obj.draw( ctx ) );
+
+		// TODO: remove
+		this.places.forEach( p => {
+			ctx.strokeStyle = '#ffffff';
+			ctx.strokeRect( p.x, p.y, p.w, p.h );
+		} );
 	}
 
 
@@ -64,11 +72,7 @@ js13k.Level = class {
 	 *
 	 * @param {number} x
 	 * @param {number} y
-	 * @param {object} aabb
-	 * @param {number} aabb.x
-	 * @param {number} aabb.y
-	 * @param {number} aabb.w
-	 * @param {number} aabb.h
+	 * @param {Place} aabb
 	 * @returns {boolean}
 	 */
 	isInside( x, y, aabb ) {
@@ -109,3 +113,13 @@ js13k.Level = class {
 
 
 };
+
+
+/**
+ * @typedef {object} Place
+ * @property {string} n - Name
+ * @property {number} x
+ * @property {number} y
+ * @property {number} w
+ * @property {number} h
+ */

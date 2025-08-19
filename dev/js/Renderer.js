@@ -202,7 +202,7 @@ js13k.Renderer = {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
 
-			this.level?.onClick( ...this.cursor );
+			this.level?.onClick( ...this.getScaledCursor() );
 		} );
 	},
 

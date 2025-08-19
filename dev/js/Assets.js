@@ -13,18 +13,41 @@ js13k.Assets = {
 
 	graphics: {
 		bookshelf: {
-			w: 300,
-			h: 500,
-			data: [
-				'fr,0,0,300,500,6b5326',
-			],
+			w: 400,
+			h: 600,
+			render: ctx => {
+				ctx.fillStyle = '#6b5326';
+				ctx.fillRect( 0, 0, 400, 600 );
+			},
 		},
 		cat: {
 			w: 120,
-			h: 140,
-			data: [
-				'fr,0,0,120,140,000000',
-			],
+			h: 170,
+			render: ctx => {
+				ctx.fillStyle = '#000000';
+
+				// body
+				ctx.fillRect( 0, 30, 120, 170 );
+
+				ctx.beginPath();
+				// left ear
+				ctx.moveTo( 0, 30 );
+				ctx.lineTo( 15, 0 );
+				ctx.lineTo( 30, 30 );
+				// right ear
+				ctx.moveTo( 90, 30 );
+				ctx.lineTo( 105, 0 );
+				ctx.lineTo( 120, 30 );
+				ctx.fill();
+
+				ctx.fillStyle = '#ffffff';
+
+				// eyes
+				ctx.beginPath();
+				ctx.arc( 35, 70, 10, 0, Math.PI * 2 );
+				ctx.arc( 85, 70, 10, 0, Math.PI * 2 );
+				ctx.fill();
+			},
 		},
 	},
 
