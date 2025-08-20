@@ -13,9 +13,11 @@ Theme: **Black Cat**
 
 ## Controls
 
-...
+* Mouse to point & click
+* `[Escape]` to pause
 
 
 ## Resources
 
-...
+* ["Kitten meow" audio by AlexMurphy53](https://freesound.org/people/AlexMurphy53/sounds/330429/)
+* [ZzFX – Zuper Zmall Zound Zynth](https://github.com/KilledByAPixel/ZzFX)

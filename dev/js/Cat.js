@@ -23,12 +23,31 @@ js13k.Cat = class extends js13k.LevelObject {
 		this.currentPlace = place;
 
 		this.animation = {
-			startX: this.x,
-			startY: this.y,
-			targetX: place.x + ( place.w - this.w ) / 2,
-			targetY: place.y + place.h - this.h,
-			start: this.level.timer,
-			duration: js13k.TARGET_FPS,
+			start: {
+				x: this.x,
+				y: this.y,
+			},
+			target: {
+				x: place.x + ( place.w - this.w ) / 2,
+				y: place.y + place.h - this.h,
+			},
+			timerStart: this.level.timer,
+
+			apply( self, timer ) {
+				const progress = ( timer - this.timerStart ) / js13k.TARGET_FPS;
+
+				if( progress >= 1 ) {
+					self.x = this.target.x;
+					self.y = this.target.y;
+
+					return true;
+				}
+
+				self.x = js13k.interpolate( this.start.x, this.target.x, progress );
+				self.y = js13k.interpolate( this.start.y, this.target.y, progress );
+
+				return false;
+			},
 		};
 	}
 
@@ -38,18 +57,8 @@ js13k.Cat = class extends js13k.LevelObject {
 	 * @param {number} timer
 	 */
 	update( timer ) {
-		if( this.animation ) {
-			const progress = ( timer - this.animation.start ) / this.animation.duration;
-
-			if( progress > 1 ) {
-				this.x = this.animation.targetX;
-				this.y = this.animation.targetY;
-				this.animation = null;
-			}
-			else {
-				this.x = js13k.interpolate( this.animation.startX, this.animation.targetX, progress );
-				this.y = js13k.interpolate( this.animation.startY, this.animation.targetY, progress );
-			}
+		if( this.animation?.apply( this, timer ) ) {
+			this.animation = null;
 		}
 	}
 

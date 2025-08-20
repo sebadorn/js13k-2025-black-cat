@@ -42,13 +42,12 @@ js13k.Renderer = {
 		}
 
 		let [x, y] = this.getScaledCursor();
-		const w = 9;
-		const h = 9;
-		x = x - w / 2;
-		y = y - h / 2;
+		const w = this._cursorCnv.width;
+		const h = this._cursorCnv.height;
+		x = Math.round( x - w / 2 );
+		y = Math.round( y - h / 6 );
 
-		this.ctxUI.fillStyle = '#fff';
-		this.ctxUI.fillRect( Math.round( x ), Math.round( y ), w, h );
+		this.ctxUI.drawImage( this._cursorCnv, x, y );
 	},
 
 
@@ -130,6 +129,10 @@ js13k.Renderer = {
 		this.cnv.style.zIndex = 1;
 		this.cnvUI.style.zIndex = 10;
 		document.body.append( this.cnv, this.cnvUI );
+
+		const cursorAsset = js13k.Assets.graphics.cursor;
+		[this._cursorCnv, this._cursorCtx] = this.getOffscreenCanvas( cursorAsset.w, cursorAsset.h );
+		cursorAsset.render( this._cursorCtx );
 
 		this.registerEvents();
 	},

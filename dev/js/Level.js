@@ -45,7 +45,7 @@ js13k.Level = class {
 		ctx.fillStyle = '#123349';
 		ctx.fillRect( 0, 0, 1920, 1080 );
 		// Floor
-		ctx.fillStyle = '#3d2609';
+		ctx.fillStyle = '#41403f';
 		ctx.fillRect( 0, 900, 1920, 180 );
 	}
 
@@ -62,7 +62,7 @@ js13k.Level = class {
 
 		// TODO: remove
 		this.places.forEach( p => {
-			ctx.strokeStyle = '#ffffff';
+			ctx.strokeStyle = '#fff';
 			ctx.strokeRect( p.x, p.y, p.w, p.h );
 		} );
 	}
