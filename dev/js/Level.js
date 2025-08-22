@@ -12,7 +12,7 @@ js13k.Level = class {
 		this.timer = 0;
 
 		/** @type {js13k.Cat} */
-		this.cat = new js13k.Cat( 500, 500, js13k.Assets.graphics.cat, this );
+		this.cat = new js13k.Cat( 500, 500, js13k.Assets.graphics.cat_sleeping, this );
 
 		/** @type {js13k.LevelObject[]} */
 		this.background = [

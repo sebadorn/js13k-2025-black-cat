@@ -20,13 +20,10 @@ const js13k = {
 	 *
 	 */
 	init() {
-		js13k.Assets.load( () => {
-			js13k.Input.init();
-			js13k.Renderer.init();
-
-			js13k.Renderer.level = new js13k.Level();
-			js13k.Renderer.mainLoop();
-		} );
+		js13k.Input.init();
+		js13k.Renderer.init();
+		js13k.Renderer.level = new js13k.Level();
+		js13k.Renderer.mainLoop();
 	},
 
 

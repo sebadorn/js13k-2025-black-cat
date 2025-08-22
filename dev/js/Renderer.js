@@ -42,12 +42,12 @@ js13k.Renderer = {
 		}
 
 		let [x, y] = this.getScaledCursor();
-		const w = this._cursorCnv.width;
-		const h = this._cursorCnv.height;
+		const w = this._cursorAsset.w;
+		const h = this._cursorAsset.h;
 		x = Math.round( x - w / 2 );
 		y = Math.round( y - h / 6 );
 
-		this.ctxUI.drawImage( this._cursorCnv, x, y );
+		this._cursorAsset.draw( this.ctxUI, x, y );
 	},
 
 
@@ -106,6 +106,7 @@ js13k.Renderer = {
 		canvas.height = h;
 
 		const ctx = canvas.getContext( '2d', { alpha: true } );
+		ctx.imageSmoothingEnabled = false;
 
 		return [canvas, ctx];
 	},
@@ -130,9 +131,9 @@ js13k.Renderer = {
 		this.cnvUI.style.zIndex = 10;
 		document.body.append( this.cnv, this.cnvUI );
 
-		const cursorAsset = js13k.Assets.graphics.cursor;
-		[this._cursorCnv, this._cursorCtx] = this.getOffscreenCanvas( cursorAsset.w, cursorAsset.h );
-		cursorAsset.render( this._cursorCtx );
+		/** @type {js13k.Asset} */
+		this._cursorAsset = js13k.Assets.graphics.cursor;
+		this._cursorAsset.render();
 
 		this.registerEvents();
 	},
@@ -149,6 +150,9 @@ js13k.Renderer = {
 			// Target speed of 60 FPS (=> 1000 / 60 ~= 16.667 [ms]).
 			const dt = timeElapsed / ( 1000 / js13k.TARGET_FPS );
 
+			this.ctx.imageSmoothingEnabled = false;
+			this.ctxUI.imageSmoothingEnabled = false;
+
 			if( this.isPaused ) {
 				this.drawPause();
 				return; // Stop the loop.
@@ -164,7 +168,7 @@ js13k.Renderer = {
 			this.ctxUI.font = '600 12px ' + js13k.FONT_MONO;
 			this.ctxUI.textAlign = 'left';
 			this.ctxUI.fillText(
-				~~( js13k.TARGET_FPS / dt ) + ' FPS, ' + Math.round( this.scale * 1000 ) / 1000,
+				String( Math.round( js13k.TARGET_FPS / dt ) ).padStart( 3, '0' ) + ' FPS, ' + this.scale.toFixed( 5 ),
 				10, 20
 			);
 		}

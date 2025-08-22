@@ -29,10 +29,10 @@ sed -E -i'' 's/<script src="([a-zA-Z0-9_-]+\/)+[a-zA-Z0-9_.-]{2,}\.js"><\/script
 terser \
 	'ZzFXMicro.min.js' \
 	'js13k.js' \
+	'Renderer.js' \
 	'Assets.js' \
 	'Audio.js' \
 	'Input.js' \
-	'Renderer.js' \
 	'Level.js' \
 	'LevelObject.js' \
 	'Cat.js' \

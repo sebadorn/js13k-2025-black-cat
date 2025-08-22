@@ -19,20 +19,16 @@ js13k.LevelObject = class {
 
 	/**
 	 *
-	 * @param {number}   x
-	 * @param {number}   y
-	 * @param {object}   asset
-	 * @param {number}   asset.w
-	 * @param {number}   asset.h
-	 * @param {string[]} asset.data
-	 * @param {js13k.Level} level
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {js13k.Asset|object} asset
+	 * @param {js13k.Level}        level
 	 */
 	constructor( x, y, asset, level ) {
 		this.level = level;
 		this._asset = asset;
 		this.x = x;
 		this.y = y;
-		[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( asset.w, asset.h );
 
 		this.render();
 	}
@@ -61,7 +57,7 @@ js13k.LevelObject = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
-		ctx.drawImage( this.cnv, this.getGlobalX(), this.getGlobalY() );
+		this._asset.draw( ctx, this.getGlobalX(), this.getGlobalY() );
 	}
 
 
@@ -88,8 +84,7 @@ js13k.LevelObject = class {
 	 * @private
 	 */
 	render() {
-		this.ctx.clearRect( 0, 0, this._asset.w, this._asset.h );
-		this._asset.render( this.ctx );
+		this._asset.render();
 	}
 
 
@@ -97,7 +92,7 @@ js13k.LevelObject = class {
 	 *
 	 * @param {number} timer
 	 */
-	update( timer ) {
+	update( _timer ) {
 		// TODO:
 	}
 

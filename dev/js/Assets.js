@@ -1,6 +1,99 @@
 'use strict';
 
 
+js13k.Asset = class {
+
+
+	/**
+	 *
+	 * @param {object}  options
+	 * @param {string?} options.data
+	 * @param {object?} options.colors
+	 * @param {number}  options.w
+	 * @param {number}  options.h
+	 * @param {number}  [options.scale = 1]
+	 * @param {function?} options.render
+	 */
+	constructor( options ) {
+		this.options = options;
+		this.options.scale ??= 1;
+
+		[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.options.w, this.options.h );
+	}
+
+
+	/**
+	 *
+	 * @returns {number}
+	 */
+	get w() {
+		return this.options.w * this.options.scale;
+	}
+
+
+	/**
+	 *
+	 * @returns {number}
+	 */
+	get h() {
+		return this.options.h * this.options.scale;
+	}
+
+
+	/**
+	 *
+	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {number} x
+	 * @param {number} y
+	 */
+	draw( ctx, x, y ) {
+		ctx.drawImage( this.cnv, x, y, this.w, this.h );
+	}
+
+
+	/**
+	 *
+	 */
+	render() {
+		if( this._isRendered ) {
+			return;
+		}
+
+		this._isRendered = true;
+
+		if( this.options.render ) {
+			this.options.render.call( this, this.ctx, this.options.w, this.options.h );
+			return;
+		}
+
+		const imageData = this.ctx.createImageData( this.options.w, this.options.h );
+
+		for( let i = 0; i < this.options.data.length; i++ ) {
+			const d = this.options.data[i];
+			const color = this.options.colors[d];
+
+			let r = 0;
+			let g = 0;
+			let b = 0;
+			let a = 0;
+
+			if( color ) {
+				[r, g, b, a] = color;
+			}
+
+			imageData.data[i * 4 + 0] = r;
+			imageData.data[i * 4 + 1] = g;
+			imageData.data[i * 4 + 2] = b;
+			imageData.data[i * 4 + 3] = a;
+		}
+
+		this.ctx.putImageData( imageData, 0, 0 );
+	}
+
+
+};
+
+
 js13k.Assets = {
 
 
@@ -12,72 +105,41 @@ js13k.Assets = {
 	},
 
 	graphics: {
-		bookshelf: {
+		bookshelf: new js13k.Asset( {
 			w: 400,
 			h: 600,
-			render( ctx ) {
+			render: ( ctx, w, h ) => {
 				ctx.fillStyle = '#6b5326';
-				ctx.fillRect( 0, 0, 400, 600 );
+				ctx.fillRect( 0, 0, w, h );
 			},
-		},
-		cat: {
-			w: 120,
-			h: 170,
-			render( ctx ) {
-				ctx.fillStyle = '#000';
+		} ),
 
-				// body
-				ctx.fillRect( 0, 30, this.w, this.h );
-
-				ctx.beginPath();
-				// left ear
-				ctx.moveTo( 0, 30 );
-				ctx.lineTo( 15, 0 );
-				ctx.lineTo( 30, 30 );
-				// right ear
-				ctx.moveTo( 90, 30 );
-				ctx.lineTo( 105, 0 );
-				ctx.lineTo( this.w, 30 );
-				ctx.fill();
-
-				// eyes
-				ctx.fillStyle = '#fff';
-				ctx.beginPath();
-				ctx.arc( 40, 60, 5, 0, Math.PI * 2 );
-				ctx.arc( 80, 60, 5, 0, Math.PI * 2 );
-				ctx.fill();
-				// ctx.fillStyle = '#000';
-				// ctx.beginPath();
-				// ctx.arc( 40, 60, 4, 0, Math.PI * 2 );
-				// ctx.arc( 80, 60, 4, 0, Math.PI * 2 );
-				// ctx.fill();
+		cat_sleeping: new js13k.Asset( {
+			data: '                                                                                   bbbbbbbbbbb                                        bbbbbbbbbbb bbbbbbbbbbbb                                       bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb                              bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb          bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb        bbbbbaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb        bbbbbaabbbaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbb       bbbbbbbaaabaaabbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaabbbbbbb       bbbbbbbbbaaabbbbbbbbbbbbbabbbbbbbbbbbbbbbbbbbbbbbaabbbbbb       bbbbbbbbbaabbbbbbbbbbbbbbaabbbbbbbbbbbbbbbbbbbbbbbaaabbbb       bbbbbbbbbabbbbbbbbbbabbbbbaabbbbbbbbbbbbbbbbbbbbbbbbaaabb       bbbbbbbbbabbbbbbbbbbaaabbbbabbbbbbbbbbbbbbbbbbbbbbbbbbabb       bbbbbbbbaabbbbbbbbbbbbaaabbabbbbbbbbbbbbbbbbbbbbbbbbbbabbbbb    bbbbbaababbbbbbbbbbbbbbbaaaabbbbbbbbbbbbbbbbbbbbbbbbbbaabbbb    bbbbbbaaabbbbbbbbbbbbbbbbbaabbbbbbbbbbbbbbbbbbbbbbabbbbabbbb    bbbbabbaabbaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbaabbbabbbb    bbbbaaaaabbbaaaabbaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbabbbabbbb    bbbbbbbbabbbbbbbbbbaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbabbbabbbb    bbbbaaaaabbbbbbbbbbbbbbbbbaaaaaabbbbbbbbbbbbbbbbbbbabbbabbbb    bbbbbbbbabbbbbbbbbbbbbbbbbabbbbbbbbbbbbbbbbbbbbbbbbabbbabbbb    bbbbbbbaaabbbbbbbbbbbbbbbbaaabbbbbbbbbbbbbbbbbbbbbaabbbabbbb    bbbbbbbaaaaaabbbbbbbbbbbbaaaaaaabbbbbbbbbbbbbbbbbaabbbbabbbb         baabbbbaaabbbbbbbbbbbbaabbbbbbbbbbbbbbaaaaaaabbbbaabbbb         baabbbbbbabbbbbbbbbbbbbaabbbbbbbbbbaaaabbbbbbbbbbabbbb          bbaaabbbbaaaaaabbbbbbbbbbbbbbbbbbbaabbbbbbbbbbbbaabbbb          bbbbaaabbaabbbaaabbbbbbbbbbbbbbbbbabbbbbbbbbbbaaabbbb           bbbbbbaaababbbbaaabbbbbbbbbbbbbbbbaaaaaaaaaaaaabbbbbb           bbbbbbbbbbaaabbbaaaaaaaaabbbbbbbbaaaaaaaaaaabbbbbbbb            bbbbbbbbbbbbaaaaabbbbbbbaaaaaaaaaabbbbbbbbbbbbbbbbbb            bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb                     bbbbbbbbbb        bbbbbbbbbb                       ',
+			colors: {
+				'a': [255, 255, 255, 255],
+				'b': [0, 0, 0, 255],
 			},
-		},
-		cursor: {
+			w: 64,
+			h: 32,
+			scale: 2,
+		} ),
+
+		cursor: new js13k.Asset( {
 			w: 20,
 			h: 30,
-			render( ctx ) {
+			render: ( ctx, w, h ) => {
 				ctx.fillStyle = '#000';
-				ctx.fillRect( 0, 0, this.w, this.h );
+				ctx.fillRect( 0, 0, w, h );
 
 				ctx.fillStyle = '#fff';
-				const step = Math.round( this.w / 4 );
-				const length = Math.round( this.h / 3 );
+				const step = Math.round( w / 4 );
+				const length = Math.round( h / 3 );
 				ctx.fillRect( step, 0, 2, length );
 				ctx.fillRect( step * 2, 0, 2, length );
 				ctx.fillRect( step * 3, 0, 2, length );
 			},
-		},
-	},
-
-
-	/**
-	 *
-	 * @param {function} cb
-	 */
-	load( cb ) {
-		// TODO:
-		cb();
+		} ),
 	},
 
 
