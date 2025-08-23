@@ -7,12 +7,12 @@ js13k.Renderer = {
 	/** @type {HTMLCanvasElement?} */
 	cnv: null,
 	/** @type {HTMLCanvasElement?} */
-	cnvUI: null,
+	// cnvUI: null,
 
 	/** @type {CanvasRenderingContext2D?} */
 	ctx: null,
 	/** @type {CanvasRenderingContext2D?} */
-	ctxUI: null,
+	// ctxUI: null,
 
 	/** @type {js13k.Level?} */
 	level: null,
@@ -31,24 +31,24 @@ js13k.Renderer = {
 	translateY: 0,
 
 
-	/**
-	 *
-	 * @private
-	 */
-	_drawCursor() {
-		// Use negative x value to indicate hidden cursor.
-		if( this.cursor[0] < 0 ) {
-			return;
-		}
+	// /**
+	//  *
+	//  * @private
+	//  */
+	// _drawCursor() {
+	// 	// Use negative x value to indicate hidden cursor.
+	// 	if( this.cursor[0] < 0 ) {
+	// 		return;
+	// 	}
 
-		let [x, y] = this.getScaledCursor();
-		const w = this._cursorAsset.w;
-		const h = this._cursorAsset.h;
-		x = Math.round( x - w / 2 );
-		y = Math.round( y - h / 6 );
+	// 	let [x, y] = this.getScaledCursor();
+	// 	const w = this._cursorAsset.w;
+	// 	const h = this._cursorAsset.h;
+	// 	x = Math.round( x - w / 2 );
+	// 	y = Math.round( y - h / 6 );
 
-		this._cursorAsset.draw( this.ctxUI, x, y );
-	},
+	// 	this._cursorAsset.draw( this.ctxUI, x, y );
+	// },
 
 
 	/**
@@ -57,8 +57,8 @@ js13k.Renderer = {
 	clear() {
 		this.ctx.setTransform( 1, 0, 0, 1, 0, 0 );
 		this.ctx.clearRect( 0, 0, window.innerWidth, window.innerHeight );
-		this.ctxUI.setTransform( 1, 0, 0, 1, 0, 0 );
-		this.ctxUI.clearRect( 0, 0, window.innerWidth, window.innerHeight );
+		// this.ctxUI.setTransform( 1, 0, 0, 1, 0, 0 );
+		// this.ctxUI.clearRect( 0, 0, window.innerWidth, window.innerHeight );
 	},
 
 
@@ -68,10 +68,10 @@ js13k.Renderer = {
 	draw() {
 		this.clear();
 		this.ctx.setTransform( this.scale, 0, 0, this.scale, this.translateX, this.translateY );
-		this.ctxUI.setTransform( this.scale, 0, 0, this.scale, 0, 0 );
+		// this.ctxUI.setTransform( this.scale, 0, 0, this.scale, 0, 0 );
 
 		this.level?.draw( this.ctx );
-		this._drawCursor();
+		// this._drawCursor();
 	},
 
 
@@ -79,18 +79,18 @@ js13k.Renderer = {
 	 * Draw the pause screen.
 	 */
 	drawPause() {
-		this.ctxUI.setTransform( 1, 0, 0, 1, 0, 0 );
-		this.ctxUI.clearRect( 0, 0, window.innerWidth, window.innerHeight );
+		this.ctx.setTransform( 1, 0, 0, 1, 0, 0 );
+		this.ctx.clearRect( 0, 0, window.innerWidth, window.innerHeight );
 
-		this.ctxUI.setTransform( this.scale, 0, 0, this.scale, 0, 0 );
-		this.ctxUI.fillStyle = '#0006';
-		this.ctxUI.fillRect( 0, 0, this.cnvUI.width / this.scale, this.cnvUI.height / this.scale );
+		this.ctx.setTransform( this.scale, 0, 0, this.scale, 0, 0 );
+		this.ctx.fillStyle = '#0006';
+		this.ctx.fillRect( 0, 0, this.cnv.width / this.scale, this.cnv.height / this.scale );
 
-		this.ctxUI.fillStyle = '#fff';
-		this.ctxUI.font = '600 56px ' + js13k.FONT_SANS;
-		this.ctxUI.textAlign = 'center';
-		this.ctxUI.textBaseline = 'top';
-		this.ctxUI.fillText( 'PAWSED', this.center.x, this.center.y - 56 );
+		this.ctx.fillStyle = '#fff';
+		this.ctx.font = '600 56px ' + js13k.FONT_SANS;
+		this.ctx.textAlign = 'center';
+		this.ctx.textBaseline = 'top';
+		this.ctx.fillText( 'PAWSED', this.center.x, this.center.y - 56 );
 	},
 
 
@@ -126,16 +126,17 @@ js13k.Renderer = {
 	 */
 	init() {
 		[this.cnv, this.ctx] = this.getOffscreenCanvas();
-		[this.cnvUI, this.ctxUI] = this.getOffscreenCanvas();
-		this.cnv.style.zIndex = 1;
-		this.cnvUI.style.zIndex = 10;
-		document.body.append( this.cnv, this.cnvUI );
+		// [this.cnvUI, this.ctxUI] = this.getOffscreenCanvas();
+		// this.cnv.style.zIndex = 1;
+		// this.cnvUI.style.zIndex = 10;
+		document.body.append( this.cnv );
 
-		/** @type {js13k.Asset} */
-		this._cursorAsset = js13k.Assets.graphics.cursor;
-		this._cursorAsset.render();
+		// /** @type {js13k.Asset} */
+		// this._cursorAsset = js13k.Assets.graphics.cursor;
+		// this._cursorAsset.render();
 
 		this.registerEvents();
+		this.resize();
 	},
 
 
@@ -151,7 +152,6 @@ js13k.Renderer = {
 			const dt = timeElapsed / ( 1000 / js13k.TARGET_FPS );
 
 			this.ctx.imageSmoothingEnabled = false;
-			this.ctxUI.imageSmoothingEnabled = false;
 
 			if( this.isPaused ) {
 				this.drawPause();
@@ -164,10 +164,10 @@ js13k.Renderer = {
 			this.draw();
 
 			// Draw FPS info
-			this.ctxUI.fillStyle = '#fff';
-			this.ctxUI.font = '600 12px ' + js13k.FONT_MONO;
-			this.ctxUI.textAlign = 'left';
-			this.ctxUI.fillText(
+			this.ctx.fillStyle = '#fff';
+			this.ctx.font = '600 12px ' + js13k.FONT_MONO;
+			this.ctx.textAlign = 'left';
+			this.ctx.fillText(
 				String( Math.round( js13k.TARGET_FPS / dt ) ).padStart( 3, '0' ) + ' FPS, ' + this.scale.toFixed( 5 ),
 				10, 20
 			);
@@ -196,16 +196,16 @@ js13k.Renderer = {
 
 		js13k.Input.onKeyUp( 'Escape', () => this.togglePause() );
 
-		this.cnvUI.addEventListener( 'mouseleave', _ev => {
+		this.cnv.addEventListener( 'mouseleave', _ev => {
 			this.cursor[0] = -1;
 		} );
 
-		this.cnvUI.addEventListener( 'mousemove', ev => {
+		this.cnv.addEventListener( 'mousemove', ev => {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
 		} );
 
-		this.cnvUI.addEventListener( 'click', ev => {
+		this.cnv.addEventListener( 'click', ev => {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
 
@@ -218,35 +218,26 @@ js13k.Renderer = {
 	 * Resize the canvas.
 	 */
 	resize() {
-		const targetRatio = 1920 / 1080;
+		let size = Math.min( window.innerWidth, window.innerHeight );
+		this.scale = size / 1080;
 
-		let height = window.innerHeight;
-		let width = Math.round( height * targetRatio );
+		// const targetRatio = 1920 / 1080;
 
-		if( width > window.innerWidth ) {
-			width = window.innerWidth;
-			height = width / targetRatio;
-		}
+		// let height = window.innerHeight;
+		// let width = Math.round( height * targetRatio );
 
-		this.scale = height / 1080;
+		// if( width > window.innerWidth ) {
+		// 	width = window.innerWidth;
+		// 	height = width / targetRatio;
+		// }
 
-		this.center.x = width / 2 / this.scale;
-		this.center.y = height / 2 / this.scale;
+		// this.scale = height / 1080;
 
-		let posTop = Math.round( ( window.innerHeight - height ) / 2 );
-		let posLeft = Math.round( ( window.innerWidth - width ) / 2 );
+		this.center.x = size / 2 / this.scale;
+		this.center.y = size / 2 / this.scale;
 
-		this.cnv.width = width;
-		this.cnv.height = height;
-		this.cnv.style.top = posTop + 'px';
-		this.cnv.style.left = posLeft + 'px';
-
-		this.cnvUI.width = width;
-		this.cnvUI.height = height;
-		this.cnvUI.style.top = posTop + 'px';
-		this.cnvUI.style.left = posLeft + 'px';
-
-		this.offset = [posLeft, posTop];
+		this.cnv.width = size;
+		this.cnv.height = size;
 
 		if( this.isPaused ) {
 			clearTimeout( this._timeoutDrawPause );

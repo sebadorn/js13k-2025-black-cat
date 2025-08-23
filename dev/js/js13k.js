@@ -16,6 +16,16 @@ const js13k = {
 	TITLE: 'js13k 2025: Black Cat',
 
 
+	get w() {
+		return Math.round( js13k.Renderer.cnv.width / js13k.Renderer.scale );
+	},
+
+
+	get h() {
+		return Math.round( js13k.Renderer.cnv.height / js13k.Renderer.scale );
+	},
+
+
 	/**
 	 *
 	 */

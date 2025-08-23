@@ -29,6 +29,7 @@ js13k.LevelObject = class {
 		this._asset = asset;
 		this.x = x;
 		this.y = y;
+		this.frame = 0;
 
 		this.render();
 	}
@@ -57,7 +58,7 @@ js13k.LevelObject = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
-		this._asset.draw( ctx, this.getGlobalX(), this.getGlobalY() );
+		this._asset.draw( ctx, this.getGlobalX(), this.getGlobalY(), this.frame );
 	}
 
 
@@ -92,8 +93,11 @@ js13k.LevelObject = class {
 	 *
 	 * @param {number} timer
 	 */
-	update( _timer ) {
-		// TODO:
+	update( timer ) {
+		if( this._asset.options.frames > 1 ) {
+			timer /= this._asset.options.frameTimeSlowdown;
+			this.frame = Math.floor( timer % this._asset.options.frames );
+		}
 	}
 
 

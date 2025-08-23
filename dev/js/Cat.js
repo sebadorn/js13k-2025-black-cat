@@ -57,6 +57,8 @@ js13k.Cat = class extends js13k.LevelObject {
 	 * @param {number} timer
 	 */
 	update( timer ) {
+		super.update( timer );
+
 		if( this.animation?.apply( this, timer ) ) {
 			this.animation = null;
 		}

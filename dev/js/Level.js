@@ -10,43 +10,6 @@ js13k.Level = class {
 	 */
 	constructor() {
 		this.timer = 0;
-
-		/** @type {js13k.Cat} */
-		this.cat = new js13k.Cat( 500, 500, js13k.Assets.graphics.cat_sleeping, this );
-
-		/** @type {js13k.LevelObject[]} */
-		this.background = [
-			new js13k.LevelObject( 300, 300, js13k.Assets.graphics.bookshelf, this ),
-		];
-
-		/** @type {js13k.LevelObject[]} */
-		this.middleground = [
-			this.cat,
-		];
-
-		/** @type {js13k.LevelObject[]} */
-		this.foreground = [];
-
-		/** @type {Place[]} */
-		this.places = [
-			{ n: 'Window', x: 1700, y: 100, w: 200, h: 150 },
-			{ n: 'Cauldron', x: 900, y: 600, w: 400, h: 300 },
-		];
-	}
-
-
-	/**
-	 *
-	 * @private
-	 * @param {CanvasRenderingContext2D} ctx
-	 */
-	_drawScenery( ctx ) {
-		// Sky
-		ctx.fillStyle = '#123349';
-		ctx.fillRect( 0, 0, 1920, 1080 );
-		// Floor
-		ctx.fillStyle = '#41403f';
-		ctx.fillRect( 0, 900, 1920, 180 );
 	}
 
 
@@ -55,16 +18,48 @@ js13k.Level = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
-		this._drawScenery( ctx );
-		this.background.forEach( obj => obj.draw( ctx ) );
-		this.middleground.forEach( obj => obj.draw( ctx ) );
-		this.foreground.forEach( obj => obj.draw( ctx ) );
+		const gradient = ctx.createRadialGradient( js13k.w / 2, js13k.h / 2 + 280, 100, js13k.w / 2, js13k.h / 2 + 280, 600 );
+		gradient.addColorStop( 0, '#777' );
+		gradient.addColorStop( 1, '#555' );
 
-		// TODO: remove
-		this.places.forEach( p => {
-			ctx.strokeStyle = '#fff';
-			ctx.strokeRect( p.x, p.y, p.w, p.h );
-		} );
+		ctx.fillStyle = gradient;
+		ctx.beginPath();
+		ctx.ellipse( js13k.w / 2, js13k.h / 2 + 260, 500, 340, 0, 0, Math.PI * 2 );
+		ctx.fill();
+
+		// ctx.fillStyle = '#777';
+		ctx.beginPath();
+		ctx.ellipse( js13k.w / 2, js13k.h / 2 + 20, 460, 150, 0, 0, Math.PI * 2 );
+		ctx.fill();
+
+		ctx.save();
+
+		ctx.fillStyle = '#555';
+		ctx.beginPath();
+		ctx.ellipse( js13k.w / 2, js13k.h / 2 + 10, 410, 110, 0, 0, Math.PI * 2 );
+		ctx.fill();
+		ctx.clip();
+
+		ctx.fillStyle = '#074';
+		ctx.beginPath();
+		ctx.ellipse( js13k.w / 2, js13k.h / 2 + 70, 390, 100, 0, 0, Math.PI * 2 );
+		ctx.fill();
+
+		ctx.restore();
+
+		// Pixelate
+		const smallW = js13k.w / 10;
+		const smallH = js13k.h / 10;
+
+		if( !this._cnvSmall ) {
+			[this._cnvSmall, this._ctxSmall] = js13k.Renderer.getOffscreenCanvas( smallW, smallH );
+		}
+
+		this._ctxSmall.clearRect( 0, 0, smallW, smallH );
+		this._ctxSmall.drawImage( js13k.Renderer.cnv, 0, 0, smallW, smallH );
+
+		ctx.clearRect( 0, 0, js13k.w, js13k.h );
+		ctx.drawImage( this._cnvSmall, 0, 0, js13k.w, js13k.h );
 	}
 
 
@@ -89,13 +84,7 @@ js13k.Level = class {
 	 * @param {number} y
 	 */
 	onClick( x, y ) {
-		const place = this.places.find( p => this.isInside( x, y, p ) );
-
-		if( !place ) {
-			return;
-		}
-
-		this.cat.moveTo( place );
+		// TODO:
 	}
 
 
@@ -105,21 +94,7 @@ js13k.Level = class {
 	 */
 	update( dt ) {
 		this.timer += dt;
-
-		this.background.forEach( obj => obj.update( this.timer ) );
-		this.middleground.forEach( obj => obj.update( this.timer ) );
-		this.foreground.forEach( obj => obj.update( this.timer ) );
 	}
 
 
 };
-
-
-/**
- * @typedef {object} Place
- * @property {string} n - Name
- * @property {number} x
- * @property {number} y
- * @property {number} w
- * @property {number} h
- */
