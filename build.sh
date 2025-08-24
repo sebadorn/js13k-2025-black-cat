@@ -30,7 +30,6 @@ terser \
 	'ZzFXMicro.min.js' \
 	'js13k.js' \
 	'Renderer.js' \
-	'Assets.js' \
 	'Audio.js' \
 	'Input.js' \
 	'Level.js' \
@@ -38,6 +37,8 @@ terser \
 	'CatBg.js' \
 	'CatFg.js' \
 	'Cauldron.js' \
+	'Ingredients.js' \
+	'Potions.js' \
 	--ecma 12 --warn \
 	--compress --toplevel \
 	--mangle --mangle-props keep_quoted \

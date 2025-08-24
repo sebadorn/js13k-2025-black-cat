@@ -11,6 +11,8 @@ js13k.CatBg = class extends js13k.LevelObject {
 	constructor( level ) {
 		super( level, 800, 800 );
 
+		this.offsetY = 0;
+
 		// TODO: remove
 		/** @type {HTMLCanvasElement} */
 		this.cnv;
@@ -26,7 +28,7 @@ js13k.CatBg = class extends js13k.LevelObject {
 	 * @returns {number}
 	 */
 	_centerX( w ) {
-		return Math.round( ( this.w - w ) / 2 );
+		return ( this.w - w ) / 2;
 	}
 
 
@@ -181,7 +183,11 @@ js13k.CatBg = class extends js13k.LevelObject {
 			this._drawEars( bodyW );
 		}
 
-		ctx.drawImage( this.cnv, this.calcCenterX(), js13k.h - this.level.cauldron.h - this.h / 2 );
+		ctx.drawImage(
+			this.cnv,
+			this.calcCenterX(),
+			js13k.h - this.level.cauldron.h - this.h / 2 + this.offsetY
+		);
 	}
 
 
@@ -190,7 +196,8 @@ js13k.CatBg = class extends js13k.LevelObject {
 	 * @param {number} timer
 	 */
 	update( timer ) {
-		// TODO:
+		timer *= 0.05;
+		this.offsetY = Math.sin( timer ) * 4;
 	}
 
 

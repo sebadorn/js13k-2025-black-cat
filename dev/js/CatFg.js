@@ -24,10 +24,14 @@ js13k.CatFg = class extends js13k.LevelObject {
 	 * @private
 	 */
 	_drawPaws() {
+		let x = 240;
+		let y = 120;
+		let rx = 40;
+		let ry = 48;
 		this.ctx.fillStyle = '#000';
 		this.ctx.beginPath();
-		this.ctx.ellipse( 210, 130, 32, 40, 0, 0, Math.PI * 2 );
-		this.ctx.ellipse( this.w - 210, 130, 32, 40, 0, 0, Math.PI * 2 );
+		this.ctx.ellipse( x, y, rx, ry, 0, 0, Math.PI * 2 );
+		this.ctx.ellipse( this.w - x, y, rx, ry, 0, 0, Math.PI * 2 );
 		this.ctx.fill();
 	}
 

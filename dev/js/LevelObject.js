@@ -27,7 +27,7 @@ js13k.LevelObject = class {
 	 * @returns {number}
 	 */
 	calcCenterX() {
-		return Math.round( ( js13k.w - this.w ) / 2 );
+		return ( js13k.w - this.w ) / 2;
 	}
 
 
