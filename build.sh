@@ -35,7 +35,9 @@ terser \
 	'Input.js' \
 	'Level.js' \
 	'LevelObject.js' \
-	'Cat.js' \
+	'CatBg.js' \
+	'CatFg.js' \
+	'Cauldron.js' \
 	--ecma 12 --warn \
 	--compress --toplevel \
 	--mangle --mangle-props keep_quoted \

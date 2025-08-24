@@ -6,13 +6,9 @@ js13k.Renderer = {
 
 	/** @type {HTMLCanvasElement?} */
 	cnv: null,
-	/** @type {HTMLCanvasElement?} */
-	// cnvUI: null,
 
 	/** @type {CanvasRenderingContext2D?} */
 	ctx: null,
-	/** @type {CanvasRenderingContext2D?} */
-	// ctxUI: null,
 
 	/** @type {js13k.Level?} */
 	level: null,
@@ -56,9 +52,7 @@ js13k.Renderer = {
 	 */
 	clear() {
 		this.ctx.setTransform( 1, 0, 0, 1, 0, 0 );
-		this.ctx.clearRect( 0, 0, window.innerWidth, window.innerHeight );
-		// this.ctxUI.setTransform( 1, 0, 0, 1, 0, 0 );
-		// this.ctxUI.clearRect( 0, 0, window.innerWidth, window.innerHeight );
+		this.ctx.clearRect( 0, 0, this.cnv.width, this.cnv.height );
 	},
 
 
@@ -68,7 +62,6 @@ js13k.Renderer = {
 	draw() {
 		this.clear();
 		this.ctx.setTransform( this.scale, 0, 0, this.scale, this.translateX, this.translateY );
-		// this.ctxUI.setTransform( this.scale, 0, 0, this.scale, 0, 0 );
 
 		this.level?.draw( this.ctx );
 		// this._drawCursor();
@@ -79,9 +72,6 @@ js13k.Renderer = {
 	 * Draw the pause screen.
 	 */
 	drawPause() {
-		this.ctx.setTransform( 1, 0, 0, 1, 0, 0 );
-		this.ctx.clearRect( 0, 0, window.innerWidth, window.innerHeight );
-
 		this.ctx.setTransform( this.scale, 0, 0, this.scale, 0, 0 );
 		this.ctx.fillStyle = '#0006';
 		this.ctx.fillRect( 0, 0, this.cnv.width / this.scale, this.cnv.height / this.scale );
@@ -96,8 +86,8 @@ js13k.Renderer = {
 
 	/**
 	 * Get an offset canvas and its context.
-	 * @param  {number} w
-	 * @param  {number} h
+	 * @param  {number?} w
+	 * @param  {number?} h
 	 * @return {[HTMLCanvasElement, CanvasRenderingContext2D]}
 	 */
 	getOffscreenCanvas( w, h ) {
@@ -106,7 +96,7 @@ js13k.Renderer = {
 		canvas.height = h;
 
 		const ctx = canvas.getContext( '2d', { alpha: true } );
-		ctx.imageSmoothingEnabled = false;
+		ctx.imageSmoothingEnabled = js13k.IMAGE_SMOOTHING;
 
 		return [canvas, ctx];
 	},
@@ -126,9 +116,6 @@ js13k.Renderer = {
 	 */
 	init() {
 		[this.cnv, this.ctx] = this.getOffscreenCanvas();
-		// [this.cnvUI, this.ctxUI] = this.getOffscreenCanvas();
-		// this.cnv.style.zIndex = 1;
-		// this.cnvUI.style.zIndex = 10;
 		document.body.append( this.cnv );
 
 		// /** @type {js13k.Asset} */
@@ -151,7 +138,7 @@ js13k.Renderer = {
 			// Target speed of 60 FPS (=> 1000 / 60 ~= 16.667 [ms]).
 			const dt = timeElapsed / ( 1000 / js13k.TARGET_FPS );
 
-			this.ctx.imageSmoothingEnabled = false;
+			this.ctx.imageSmoothingEnabled = js13k.IMAGE_SMOOTHING;
 
 			if( this.isPaused ) {
 				this.drawPause();
@@ -163,6 +150,7 @@ js13k.Renderer = {
 			this.level.update( dt );
 			this.draw();
 
+			// TODO: remove
 			// Draw FPS info
 			this.ctx.fillStyle = '#fff';
 			this.ctx.font = '600 12px ' + js13k.FONT_MONO;
@@ -184,6 +172,30 @@ js13k.Renderer = {
 	 */
 	pause() {
 		this.isPaused = true;
+	},
+
+
+	/**
+	 *
+	 * @param {HTMLCanvasElement} cnv
+	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {number} [factor = 10]
+	 */
+	pixelate( cnv, ctx, factor = 10 ) {
+		if( js13k.IMAGE_SMOOTHING ) {
+			return;
+		}
+
+		const smallW = cnv.width / factor;
+		const smallH = cnv.height / factor;
+
+		const [cnvSmall, ctxSmall] = this.getOffscreenCanvas( smallW, smallH );
+
+		ctxSmall.clearRect( 0, 0, smallW, smallH );
+		ctxSmall.drawImage( cnv, 0, 0, smallW, smallH );
+
+		ctx.clearRect( 0, 0, cnv.width, cnv.height );
+		ctx.drawImage( cnvSmall, 0, 0, cnv.width, cnv.height );
 	},
 
 
@@ -218,26 +230,26 @@ js13k.Renderer = {
 	 * Resize the canvas.
 	 */
 	resize() {
-		let size = Math.min( window.innerWidth, window.innerHeight );
-		this.scale = size / 1080;
+		// let size = Math.min( window.innerWidth, window.innerHeight );
+		// this.scale = size / 1080;
 
-		// const targetRatio = 1920 / 1080;
+		const targetRatio = 1920 / 1080;
 
-		// let height = window.innerHeight;
-		// let width = Math.round( height * targetRatio );
+		let height = window.innerHeight;
+		let width = Math.round( height * targetRatio );
 
-		// if( width > window.innerWidth ) {
-		// 	width = window.innerWidth;
-		// 	height = width / targetRatio;
-		// }
+		if( width > window.innerWidth ) {
+			width = window.innerWidth;
+			height = width / targetRatio;
+		}
 
-		// this.scale = height / 1080;
+		this.scale = height / 1080;
 
-		this.center.x = size / 2 / this.scale;
-		this.center.y = size / 2 / this.scale;
+		this.center.x = width / 2 / this.scale;
+		this.center.y = height / 2 / this.scale;
 
-		this.cnv.width = size;
-		this.cnv.height = size;
+		this.cnv.width = width;
+		this.cnv.height = height;
 
 		if( this.isPaused ) {
 			clearTimeout( this._timeoutDrawPause );

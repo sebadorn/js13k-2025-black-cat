@@ -14,13 +14,22 @@ const js13k = {
 	FONT_SERIF: '"Times New Roman", serif',
 	TARGET_FPS: 60,
 	TITLE: 'js13k 2025: Black Cat',
+	IMAGE_SMOOTHING: true,
 
 
+	/**
+	 *
+	 * @returns {number}
+	 */
 	get w() {
 		return Math.round( js13k.Renderer.cnv.width / js13k.Renderer.scale );
 	},
 
 
+	/**
+	 *
+	 * @returns {number}
+	 */
 	get h() {
 		return Math.round( js13k.Renderer.cnv.height / js13k.Renderer.scale );
 	},
