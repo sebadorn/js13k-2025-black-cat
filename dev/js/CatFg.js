@@ -4,12 +4,18 @@
 js13k.CatFg = class extends js13k.LevelObject {
 
 
+	static STATE_IDLE = 1;
+	static STATE_LICK = 2;
+
+
 	/**
 	 *
 	 * @param {js13k.Level} level
 	 */
 	constructor( level ) {
 		super( level, 800, 600 );
+
+		this.state = js13k.CatFg.STATE_IDLE;
 
 		// TODO: remove
 		/** @type {HTMLCanvasElement} */
@@ -51,10 +57,28 @@ js13k.CatFg = class extends js13k.LevelObject {
 
 	/**
 	 *
+	 * @param {function} cb
+	 */
+	lick( cb ) {
+		this.animation = new js13k.Animation(
+			1,
+			progress => {
+				// TODO: animate lick
+			},
+			() => {
+				this.animation = null;
+				cb();
+			},
+		);
+	}
+
+
+	/**
+	 *
 	 * @param {number} timer
 	 */
 	update( timer ) {
-		// TODO:
+		this.animation?.do();
 	}
 
 

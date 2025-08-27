@@ -1,42 +1,25 @@
 'use strict';
 
 
-js13k.Ingredient = class extends js13k.LevelObject {
+js13k.LizardTail = {
 
 
-	/**
-	 * 
-	 * @param {js13k.Level} level
-	 * @param {string} name
-	 */
-	constructor( level, name ) {
-		super( level, 100, 100 );
-		this.name = name;
-	}
-
-
-};
-
-
-js13k.LizardTailIng = class extends js13k.Ingredient {
+	name: 'Lizard Tail',
 
 
 	/**
 	 *
-	 * @param {js13k.Level} level
 	 */
-	constructor( level ) {
-		super( level, 'Lizard Tail' );
-	}
+	draw: function() {
+		if( this.cnv ) {
+			return;
+		}
 
+		[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
 
-	/**
-	 *
-	 * @param {CanvasRenderingContext2D} ctx
-	 */
-	draw( ctx ) {
-		// TODO:
-	}
+		this.ctx.fillStyle = '#c47816';
+		this.ctx.fillRect( 0, 0, 100, 100 );
+	},
 
 
 };

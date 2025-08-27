@@ -32,8 +32,9 @@ terser \
 	'Renderer.js' \
 	'Audio.js' \
 	'Input.js' \
-	'Level.js' \
+	'Timer.js' \
 	'LevelObject.js' \
+	'Level.js' \
 	'CatBg.js' \
 	'CatFg.js' \
 	'Cauldron.js' \

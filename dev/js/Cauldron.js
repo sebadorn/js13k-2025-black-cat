@@ -17,7 +17,11 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		/** @type {CanvasRenderingContext2D} */
 		this.ctx;
 
-		this.fluidColor = '#074';
+		/** @type {string} */
+		this.fluidColor = '#2d7feb';
+
+		/** @type {js13k.Ingredient[]} */
+		this.contents = [];
 	}
 
 
@@ -30,10 +34,28 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	_drawFluid( x, y ) {
 		y += this.h * 0.08;
 
+		if( this.contents.length > 0 ) {
+			this.fluidColor = '#074';
+		}
+		// Just water
+		else {
+			this.fluidColor = '#2d7feb';
+		}
+
 		this.ctx.fillStyle = this.fluidColor;
 		this.ctx.beginPath();
 		this.ctx.ellipse( x, y, this.w * 0.36, this.h * 0.14, 0, 0, Math.PI * 2 );
 		this.ctx.fill();
+	}
+
+
+	/**
+	 *
+	 * @param {Ingredient} ingredient
+	 */
+	addContent( ingredient ) {
+		this.contents.push( ingredient );
+		this._needsRedraw = true;
 	}
 
 
@@ -91,10 +113,11 @@ js13k.Cauldron = class extends js13k.LevelObject {
 
 	/**
 	 *
-	 * @param {number} timer
+	 * @param {Ingredient[]} newContent
 	 */
-	update( timer ) {
-		// TODO: update bubble animation or water swirl or smoke or ...
+	updateContent( newContent ) {
+		this.contents = newContent;
+		this._needsRedraw = true;
 	}
 
 

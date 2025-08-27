@@ -107,7 +107,10 @@ js13k.Renderer = {
 	 * @returns {number[]}
 	 */
 	getScaledCursor() {
-		return this.cursor.map( c => c / this.scale );
+		return [
+			this.cursor[0] / this.scale,
+			this.cursor[1] / this.scale,
+		];
 	},
 
 
@@ -215,13 +218,15 @@ js13k.Renderer = {
 		this.cnv.addEventListener( 'mousemove', ev => {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
+
+			this.level?.onMouseMove( this.getScaledCursor() );
 		} );
 
 		this.cnv.addEventListener( 'click', ev => {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
 
-			this.level?.onClick( ...this.getScaledCursor() );
+			this.level?.onClick( this.getScaledCursor() );
 		} );
 	},
 
@@ -247,6 +252,9 @@ js13k.Renderer = {
 
 		this.center.x = width / 2 / this.scale;
 		this.center.y = height / 2 / this.scale;
+
+		this.offset[0] = ( window.innerWidth - width ) / 2;
+		this.offset[1] = ( window.innerHeight - height ) / 2;
 
 		this.cnv.width = width;
 		this.cnv.height = height;

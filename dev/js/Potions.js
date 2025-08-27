@@ -1,44 +1,27 @@
 'use strict';
 
 
-js13k.Potion = class extends js13k.LevelObject {
+js13k.WaterPotion = {
 
 
-	/**
-	 * 
-	 * @param {js13k.Level}        level
-	 * @param {string}             name
-	 * @param {js13k.Ingredient[]} ingredients
-	 */
-	constructor( level, name, ingredients ) {
-		super( level, 100, 100 );
-		this.name = name;
-		this.ingredients = ingredients;
-	}
+	name: 'Just a water, please',
 
-
-};
-
-
-js13k.WaterPotion = class extends js13k.Potion {
+	ingredients: [],
 
 
 	/**
 	 *
-	 * @param {js13k.Level} level
 	 */
-	constructor( level ) {
-		super( level, 'Just a water, please', [] );
-	}
+	draw: function() {
+		if( this.cnv ) {
+			return;
+		}
 
+		[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
 
-	/**
-	 *
-	 * @param {CanvasRenderingContext2D} ctx
-	 */
-	draw( ctx ) {
-		// TODO:
-	}
+		this.ctx.fillStyle = '#00f';
+		this.ctx.fillRect( 0, 0, 100, 100 );
+	},
 
 
 };

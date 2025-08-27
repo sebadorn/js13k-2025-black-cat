@@ -4,6 +4,10 @@
 js13k.CatBg = class extends js13k.LevelObject {
 
 
+	static STATE_IDLE = 1;
+	static STATE_REACT = 2;
+
+
 	/**
 	 *
 	 * @param {js13k.Level} level
@@ -12,6 +16,7 @@ js13k.CatBg = class extends js13k.LevelObject {
 		super( level, 800, 800 );
 
 		this.offsetY = 0;
+		this.state = js13k.CatBg.STATE_IDLE;
 
 		// TODO: remove
 		/** @type {HTMLCanvasElement} */
@@ -193,11 +198,35 @@ js13k.CatBg = class extends js13k.LevelObject {
 
 	/**
 	 *
+	 * @param {Ingredient[]} contents
+	 * @param {function}     cb
+	 */
+	react( contents, cb ) {
+		this.animation = new js13k.Animation(
+			1.5,
+			progress => {
+				// TODO: animate reaction
+			},
+			() => {
+				this.animation = null;
+				this.state = js13k.CatBg.STATE_IDLE;
+				cb();
+			},
+		);
+	}
+
+
+	/**
+	 *
 	 * @param {number} timer
 	 */
 	update( timer ) {
-		timer *= 0.05;
-		this.offsetY = Math.sin( timer ) * 4;
+		if( this.state == js13k.CatBg.STATE_IDLE ) {
+			timer *= 0.05;
+			this.offsetY = Math.sin( timer ) * 4;
+		}
+
+		this.animation?.do();
 	}
 
 
