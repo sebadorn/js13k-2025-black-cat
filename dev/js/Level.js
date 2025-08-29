@@ -65,8 +65,6 @@ js13k.Level = class {
 	 */
 	constructor() {
 		this.timer = 0;
-
-		this.doneOrders = 0;
 		this.score = 1;
 
 		// 0: Intro
@@ -75,11 +73,17 @@ js13k.Level = class {
 		// 3: Again more ingredients and potions with more ingredients
 		this.stage = 0;
 
+		/** @type {PotionOrder[]} */
 		this.orders = [];
-		this.ingredients = [];
+
+		/** @type {PotionOrder[]} */
+		this.doneOrders = [];
 
 		/** @type {PotionOrder?} */
-		this.currentOrder = this.orders[0]; // TODO:
+		this.currentOrder = null;
+
+		/** @type {Ingredient[]} */
+		this.ingredients = [];
 
 		this.btnBottle = new js13k.Button( js13k.Button.BOTTLE );
 		this.btnRestart = new js13k.Button( js13k.Button.RESTART );
@@ -180,7 +184,24 @@ js13k.Level = class {
 	 * @returns {PotionOrder[]}
 	 */
 	_generateOrders( stage ) {
-		// TODO: generate orders for each stage
+		const possiblePotions = [];
+		const maxIngredients = [1, 2, 3][stage] || 3;
+
+		for( const key in js13k.Potion ) {
+			/** @type {Potion} */
+			const potion = js13k.Potion[key];
+
+			if( potion.ingredients.length <= maxIngredients ) {
+				possiblePotions.push( potion );
+			}
+		}
+
+		// TODO: Some smart algo:
+		// - Orders should start with and mostly contain potions with the max number of ingredients currently allowed
+		// - But also some lower ones
+		// - Every potion should appear at least once
+		// - Repeat failed orders later again
+
 		return [
 			{ potion: js13k.WaterPotion, timeLimit: 10 },
 		];
@@ -207,20 +228,21 @@ js13k.Level = class {
 
 		if( newStage >= 1 ) {
 			this.ingredients.push(
-				js13k.LizardTail,
-				// TODO: start ingredients
+				js13k.IngredientWarm,
+				js13k.IngredientCold,
+				js13k.IngredientLife,
 			);
 		}
 
 		if( newStage >= 2 ) {
 			this.ingredients.push(
-				// TODO: added ingredients
+				js13k.IngredientEmotion,
 			);
 		}
 
 		if( newStage >= 3 ) {
 			this.ingredients.push(
-				// TODO: added ingredients
+				js13k.IngredientSupercharge,
 			);
 		}
 
@@ -267,7 +289,44 @@ js13k.Level = class {
 
 	/**
 	 *
-	 * @param {number[]} pos
+	 * @param {Ingredient[]} contents
+	 * @returns {Potion?}
+	 */
+	getPotion( contents ) {
+		const numIngredients = contents.length;
+
+		if( numIngredients == 0 ) {
+			return js13k.Potion.Water;
+		}
+
+		for( const key in js13k.Potion ) {
+			/** @type {Potion} */
+			const potion = js13k.Potion[key];
+
+			if( potion.ingredients.length != numIngredients ) {
+				continue;
+			}
+
+			let numMatches = 0;
+
+			for( const ingredient of potion.ingredients ) {
+				if( contents.includes( ingredient ) ) {
+					numMatches++;
+				}
+			}
+
+			if( numMatches == numIngredients ) {
+				return potion;
+			}
+		}
+
+		return null;
+	}
+
+
+	/**
+	 *
+	 * @param {number[]} pos - [x, y]
 	 * @param {object}   aabb
 	 * @param {number}   aabb.x
 	 * @param {number}   aabb.y
@@ -285,7 +344,7 @@ js13k.Level = class {
 
 	/**
 	 *
-	 * @param {number[]} pos
+	 * @param {number[]} pos - [x, y]
 	 */
 	onClick( pos ) {
 		if( this._clickingDisabled ) {
@@ -299,7 +358,7 @@ js13k.Level = class {
 		}
 
 		if( this.isInside( pos, this.btnBottle ) ) {
-			// TODO: create potion from cauldron contents and check
+			this.verifyPotion();
 			return;
 		}
 
@@ -327,7 +386,7 @@ js13k.Level = class {
 
 	/**
 	 *
-	 * @param {number[]} pos
+	 * @param {number[]} pos - [x, y]
 	 */
 	onMouseMove( pos ) {
 		if( this.stage == 0 ) {
@@ -362,6 +421,33 @@ js13k.Level = class {
 
 	/**
 	 *
+	 * @param {Potion?} potion
+	 * @returns {number} Score: -1 for a wrong order, 0 for an alternative potion, +1 for the correct one
+	 */
+	scoreOrder( potion ) {
+		// Not a valid potion
+		if( !potion ) {
+			return -1;
+		}
+
+		// Correct potion
+		if( this.currentOrder.potion == potion ) {
+			return 1;
+		}
+
+		const alternatives = this.currentOrder.potion.alternatives || [];
+
+		if( alternatives.includes( potion ) ) {
+			return 0;
+		}
+
+		// Wrong potion
+		return -1;
+	}
+
+
+	/**
+	 *
 	 * @param {function} cb
 	 */
 	tasteTest( cb ) {
@@ -381,19 +467,11 @@ js13k.Level = class {
 	update( dt ) {
 		this.timer += dt;
 
-		if( this.doneOrders === 3 ) {
-			this.stage = 2;
-			this.ingredients.push(
-				// TODO:
-			);
-			this.orders = this._generateOrders( this.stage );
+		if( this.doneOrders.length == 3 ) {
+			this.changeStage( 2 );
 		}
-		else if( this.doneOrders === 8 ) {
-			this.stage = 3;
-			this.ingredients.push(
-				// TODO:
-			);
-			this.orders = this._generateOrders( this.stage );
+		else if( this.doneOrders.length == 8 ) {
+			this.changeStage( 3 );
 		}
 
 		if( this.score <= 0 ) {
@@ -403,6 +481,25 @@ js13k.Level = class {
 		this.catBg.update( this.timer );
 		this.cauldron.update( this.timer );
 		this.catFg.update( this.timer );
+	}
+
+
+	/**
+	 *
+	 */
+	verifyPotion() {
+		const potion = this.getPotion( this.cauldron.contents );
+		const result = this.scoreOrder( potion );
+
+		this.score += result;
+		this.currentOrder.score = result;
+		this.doneOrders.push( this.currentOrder );
+
+		if( this.orders.length == 0 ) {
+			this.orders = this._generateOrders( this.stage );
+		}
+
+		this.currentOrder = this.orders.splice( 0, 1 )[0];
 	}
 
 
@@ -418,12 +515,16 @@ js13k.Level = class {
 /**
  * @typedef {object} Potion
  * @property {string}       name
+ * @property {string[]}     desc
  * @property {Ingredient[]} ingredients
+ * @property {Potion[]?}    alternatives - Alternatives to this potion the customer will also accept, but for not as many points.
  * @property {function}     draw
  */
 
 /**
  * @typedef {object} PotionOrder
- * @property {Potion} potion
- * @property {number} timeLimit - Time limit for the order in seconds.
+ * @property {Potion}  potion
+ * @property {string}  desc      - A randomly picked description.
+ * @property {number}  timeLimit - Time limit for the order in seconds.
+ * @property {number?} score     - The scoring result when this order was finished.
  */
