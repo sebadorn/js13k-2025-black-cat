@@ -80,6 +80,18 @@ const js13k = {
 	},
 
 
+	/**
+	 * https://stackoverflow.com/a/12646864
+	 * @param {any[]} arr
+	 */
+	shuffle( arr ) {
+		for( let i = arr.length - 1; i > 0; i-- ) {
+			const j = Math.floor( Math.random() * ( i + 1 ) );
+			[arr[i], arr[j]] = [arr[j], arr[i]];
+		}
+	},
+
+
 };
 
 

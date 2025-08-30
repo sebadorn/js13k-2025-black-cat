@@ -4,9 +4,10 @@
 js13k.Button = class {
 
 
-	static BOTTLE = 1;
-	static RESTART = 2;
-	static TASTE = 3;
+	static INTRO = 1;
+	static BOTTLE = 2;
+	static RESTART = 3;
+	static TASTE = 4;
 
 
 	/**
@@ -14,13 +15,21 @@ js13k.Button = class {
 	 * @param {number} id
 	 * @param {number} x
 	 * @param {number} y
+	 * @param {number} [w = 100]
+	 * @param {number} [h = 100]
 	 */
-	constructor( id, x, y ) {
+	constructor( id, x, y, w = 100, h = 100 ) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
-		this.w = 100;
-		this.h = 100;
+		this.w = w;
+		this.h = h;
+
+		// TODO: remove
+		/** @type {HTMLCanvasElement} */
+		this.cnv;
+		/** @type {CanvasRenderingContext2D} */
+		this.ctx;
 	}
 
 
@@ -34,9 +43,20 @@ js13k.Button = class {
 
 			this.ctx.fillStyle = '#689cce';
 			this.ctx.fillRect( 0, 0, this.w, this.h );
+
+			if( this.id == js13k.Button.INTRO ) {
+				this.ctx.fillStyle = '#000';
+				this.ctx.font = '600 20px ' + js13k.FONT_SANS;
+				this.ctx.textAlign = 'center';
+				this.ctx.textBaseline = 'middle';
+				this.ctx.fillText( 'Open Shop!', this.w / 2, this.h / 2 );
+			}
 		}
 
-		if( this.id == js13k.Button.BOTTLE ) {
+		if( this.id == js13k.Button.INTRO ) {
+			this.x = ( js13k.w - this.w ) / 2;
+		}
+		else if( this.id == js13k.Button.BOTTLE ) {
 			this.x = js13k.w - 200;
 			this.y = ( js13k.h - 100 ) / 2;
 		}
@@ -85,6 +105,7 @@ js13k.Level = class {
 		/** @type {Ingredient[]} */
 		this.ingredients = [];
 
+		this.btnIntroStart = new js13k.Button( js13k.Button.INTRO, 0, 400 - 60, 200, 40 );
 		this.btnBottle = new js13k.Button( js13k.Button.BOTTLE );
 		this.btnRestart = new js13k.Button( js13k.Button.RESTART );
 		this.btnTasteTest = new js13k.Button( js13k.Button.TASTE );
@@ -133,6 +154,35 @@ js13k.Level = class {
 	 * @private
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
+	_drawIntro( ctx ) {
+		ctx.fillStyle = '#0000004f';
+		ctx.fillRect( 0, 0, js13k.w, js13k.h );
+
+		const w = 600;
+		const h = 200;
+		const x = ( js13k.w - w ) / 2;
+		ctx.fillStyle = '#fff';
+		ctx.fillRect( x, 200, w, h );
+
+		ctx.fillStyle = '#000';
+		ctx.textAlign = 'left';
+		ctx.font = '500 16px ' + js13k.FONT_SANS;
+		ctx.textBaseline = 'top';
+		// TODO: better text UI
+		ctx.fillText( 'Welcome to the opening of Black Cat Potions!', x + 10, 210 );
+		ctx.fillText( 'Do not let your score drop below 1 or you can close your business again.', x + 10, 226 );
+		ctx.fillText( 'You have the ingredients, but alas! no recipe book.', x + 10, 242 );
+		// TODO: add button "Open Shop" and make that the click area
+
+		this.btnIntroStart.draw( ctx );
+	}
+
+
+	/**
+	 *
+	 * @private
+	 * @param {CanvasRenderingContext2D} ctx
+	 */
 	_drawOrder( ctx ) {
 		if( !this.currentOrder ) {
 			return;
@@ -140,8 +190,8 @@ js13k.Level = class {
 
 		const w = 350;
 		const h = 120;
-		const x = ( js13k.w - w ) / 2;
-		const y = 20;
+		const x = js13k.w - w - 40;
+		const y = 40;
 
 		const potion = this.currentOrder.potion;
 
@@ -149,17 +199,19 @@ js13k.Level = class {
 		ctx.fillStyle = '#fff';
 		ctx.fillRect( x, y, w, h );
 
-		potion.draw();
-		ctx.drawImage( potion.cnv, x + 10, y + 10 );
+		// Time left
+		const timeProgress = this.currentOrder.timer.progress();
+		ctx.fillStyle = '#777';
+		ctx.fillRect( x, y, w * ( 1 - timeProgress ), 10 );
 
 		// Name
 		ctx.fillStyle = '#000';
 		ctx.textAlign = 'left';
-		ctx.font = '600 16px ' + js13k.FONT_SANS;
-		ctx.fillText( potion.name.toUpperCase(), x + 120, y + 20 );
+		ctx.font = '500 16px ' + js13k.FONT_SANS;
+		ctx.fillText( this.currentOrder.desc, x + 20, y + 20 );
 
 		// Info
-		ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 120, y + 50 );
+		ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 50 );
 	}
 
 
@@ -170,10 +222,19 @@ js13k.Level = class {
 	 */
 	_drawScore( ctx ) {
 		ctx.fillStyle = '#ff0';
-		ctx.textAlign = 'right';
+		ctx.strokeStyle = '#ff0';
+		ctx.lineWidth = 6;
+
+		ctx.textAlign = 'center';
 		ctx.textBaseline = 'top';
 		ctx.font = '600 48px ' + js13k.FONT_SANS;
-		ctx.fillText( this.score, js13k.w - 50, 40 );
+		ctx.fillText( this.score, js13k.w / 2, 40 );
+
+		ctx.beginPath();
+		ctx.arc( js13k.w / 2, 60, 36, 0, Math.PI * 2 );
+		ctx.stroke();
+		ctx.fillStyle = '#ffff004f';
+		ctx.fill();
 	}
 
 
@@ -184,16 +245,15 @@ js13k.Level = class {
 	 * @returns {PotionOrder[]}
 	 */
 	_generateOrders( stage ) {
-		const possiblePotions = [];
-		const maxIngredients = [1, 2, 3][stage] || 3;
+		const possiblePotions = {};
 
 		for( const key in js13k.Potion ) {
 			/** @type {Potion} */
 			const potion = js13k.Potion[key];
+			const numIngredients = potion.ingredients.length;
 
-			if( potion.ingredients.length <= maxIngredients ) {
-				possiblePotions.push( potion );
-			}
+			possiblePotions[numIngredients] ??= [];
+			possiblePotions[numIngredients].push( potion );
 		}
 
 		// TODO: Some smart algo:
@@ -202,9 +262,60 @@ js13k.Level = class {
 		// - Every potion should appear at least once
 		// - Repeat failed orders later again
 
-		return [
-			{ potion: js13k.WaterPotion, timeLimit: 10 },
-		];
+		/** @type {Potion[]} */
+		const list = [];
+
+		if( stage == 1 ) {
+			list.push( js13k.Potion.Water, js13k.Potion.Water );
+
+			for( let i = 0; i < 8; i++ ) {
+				const rnd = Math.round( Math.random() * ( possiblePotions[1].length - 1 ) );
+				const potion = possiblePotions[1][rnd];
+				list.push( potion );
+			}
+		}
+		else if( stage == 2 ) {
+			list.push( js13k.Potion.Water );
+
+			for( let i = 0; i < 3; i++ ) {
+				const rnd = Math.round( Math.random() * ( possiblePotions[1].length - 1 ) );
+				const potion = possiblePotions[1][rnd];
+				list.push( potion );
+			}
+
+			for( let i = 0; i < 6; i++ ) {
+				const rnd = Math.round( Math.random() * ( possiblePotions[2].length - 1 ) );
+				const potion = possiblePotions[2][rnd];
+				list.push( potion );
+			}
+		}
+		else if( stage == 3 ) {
+			list.push( js13k.Potion.Water );
+
+			for( let i = 0; i < 2; i++ ) {
+				const rnd = Math.round( Math.random() * ( possiblePotions[1].length - 1 ) );
+				const potion = possiblePotions[1][rnd];
+				list.push( potion );
+			}
+
+			for( let i = 0; i < 3; i++ ) {
+				const rnd = Math.round( Math.random() * ( possiblePotions[2].length - 1 ) );
+				const potion = possiblePotions[2][rnd];
+				list.push( potion );
+			}
+
+			for( let i = 0; i < 4; i++ ) {
+				const rnd = Math.round( Math.random() * ( possiblePotions[3].length - 1 ) );
+				const potion = possiblePotions[3][rnd];
+				list.push( potion );
+			}
+		}
+
+		js13k.shuffle( list );
+
+		return list.map( potion => {
+			return { potion: potion, timeLimit: 10 };
+		} );
 	}
 
 
@@ -223,6 +334,10 @@ js13k.Level = class {
 	 * @param {number} newStage
 	 */
 	changeStage( newStage ) {
+		if( this.stage == newStage ) {
+			return;
+		}
+
 		this.stage = newStage;
 		this.ingredients = [];
 
@@ -247,6 +362,7 @@ js13k.Level = class {
 		}
 
 		this.orders = this._generateOrders( newStage );
+		this.nextOrder();
 	}
 
 
@@ -265,34 +381,21 @@ js13k.Level = class {
 		this._drawButtons( ctx );
 
 		if( this.stage == 0 ) {
-			ctx.fillStyle = '#0000004f';
-			ctx.fillRect( 0, 0, js13k.w, js13k.h );
-
-			const w = 600;
-			const h = 200;
-			const x = ( js13k.w - w ) / 2;
-			ctx.fillStyle = '#fff';
-			ctx.fillRect( x, 200, w, h );
-
-			ctx.fillStyle = '#000';
-			ctx.textAlign = 'left';
-			ctx.font = '500 16px ' + js13k.FONT_SANS;
-			ctx.textBaseline = 'top';
-			// TODO: better text UI
-			ctx.fillText( 'Welcome to the opening of Black Cat Potions!', x + 10, 210 );
-			ctx.fillText( 'Do not let your score drop below 1 or you can already close your business again.', x + 10, 226 );
-			ctx.fillText( 'You get the ingredients, but unfortunately no recipe book. Eh, you will figure it out.', x + 10, 242 );
-			// TODO: add button "Open Shop" and make that the click area
+			this._drawIntro( ctx );
 		}
 	}
 
 
 	/**
 	 *
-	 * @param {Ingredient[]} contents
+	 * @param {Ingredient[]?} contents
 	 * @returns {Potion?}
 	 */
 	getPotion( contents ) {
+		if( !contents ) {
+			return null;
+		}
+
 		const numIngredients = contents.length;
 
 		if( numIngredients == 0 ) {
@@ -344,6 +447,18 @@ js13k.Level = class {
 
 	/**
 	 *
+	 */
+	nextOrder() {
+		this.currentOrder = this.orders.splice( 0, 1 )[0];
+
+		const rnd = Math.round( Math.random() * ( this.currentOrder.potion.desc.length - 1 ) );
+		this.currentOrder.desc =this.currentOrder.potion.desc[rnd];
+		this.currentOrder.timer = new js13k.Timer( this, this.currentOrder.timeLimit );
+	}
+
+
+	/**
+	 *
 	 * @param {number[]} pos - [x, y]
 	 */
 	onClick( pos ) {
@@ -352,13 +467,15 @@ js13k.Level = class {
 		}
 
 		if( this.stage == 0 ) {
-			// TODO: limit area to starting message or a button therein
-			this.changeStage( 1 );
+			if( this.isInside( pos, this.btnIntroStart ) ) {
+				this.changeStage( 1 );
+			}
 			return;
 		}
 
 		if( this.isInside( pos, this.btnBottle ) ) {
-			this.verifyPotion();
+			this.verifyPotion( this.cauldron.contents );
+			this.cauldron.updateContent( [] );
 			return;
 		}
 
@@ -467,10 +584,15 @@ js13k.Level = class {
 	update( dt ) {
 		this.timer += dt;
 
-		if( this.doneOrders.length == 3 ) {
+		// Time is up, failed to provide a potion.
+		if( this.currentOrder?.timer?.elapsed() ) {
+			this.verifyPotion();
+		}
+
+		if( this.doneOrders.length == 6 ) {
 			this.changeStage( 2 );
 		}
-		else if( this.doneOrders.length == 8 ) {
+		else if( this.doneOrders.length == 12 ) {
 			this.changeStage( 3 );
 		}
 
@@ -486,9 +608,10 @@ js13k.Level = class {
 
 	/**
 	 *
+	 * @param {Ingredient[]?} contents
 	 */
-	verifyPotion() {
-		const potion = this.getPotion( this.cauldron.contents );
+	verifyPotion( contents ) {
+		const potion = this.getPotion( contents );
 		const result = this.scoreOrder( potion );
 
 		this.score += result;
@@ -499,7 +622,7 @@ js13k.Level = class {
 			this.orders = this._generateOrders( this.stage );
 		}
 
-		this.currentOrder = this.orders.splice( 0, 1 )[0];
+		this.nextOrder();
 	}
 
 
@@ -523,8 +646,9 @@ js13k.Level = class {
 
 /**
  * @typedef {object} PotionOrder
- * @property {Potion}  potion
- * @property {string}  desc      - A randomly picked description.
- * @property {number}  timeLimit - Time limit for the order in seconds.
- * @property {number?} score     - The scoring result when this order was finished.
+ * @property {Potion}       potion
+ * @property {string}       desc      - A randomly picked description.
+ * @property {number}       timeLimit - Time limit for the order in seconds.
+ * @property {js13k.Timer?} timer     - Timer started when the order was selected as current one.
+ * @property {number?}      score     - The scoring result when this order was finished.
  */
