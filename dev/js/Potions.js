@@ -237,36 +237,6 @@ js13k.Potion = {
 	},
 
 
-	LovePotion: {
-
-		name: 'Love Potion',
-
-		ingredients: [
-			js13k.IngredientLife,
-			js13k.IngredientEmotion,
-		],
-
-		desc: [
-			'Do you have a Love Potion?',
-		],
-
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
-
-	},
-
-
 	AmplitudePotion: {
 
 		name: 'Amplitude Potion',

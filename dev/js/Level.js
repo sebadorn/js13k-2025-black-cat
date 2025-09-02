@@ -41,15 +41,21 @@ js13k.Button = class {
 		if( !this.cnv ) {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
-			this.ctx.fillStyle = '#689cce';
-			this.ctx.fillRect( 0, 0, this.w, this.h );
-
 			if( this.id == js13k.Button.INTRO ) {
 				this.ctx.fillStyle = '#000';
 				this.ctx.font = '600 20px ' + js13k.FONT_SANS;
 				this.ctx.textAlign = 'center';
 				this.ctx.textBaseline = 'middle';
 				this.ctx.fillText( 'Open Shop!', this.w / 2, this.h / 2 );
+			}
+			else {
+				this.ctx.fillStyle = '#000';
+				this.ctx.strokeStyle = '#fff';
+				this.ctx.lineWidth = 2;
+				this.ctx.beginPath();
+				this.ctx.arc( this.w / 2, this.h / 2, this.w / 2 - 2, 0, Math.PI * 2 );
+				this.ctx.fill();
+				this.ctx.stroke();
 			}
 		}
 
@@ -62,7 +68,7 @@ js13k.Button = class {
 		}
 		else if( this.id == js13k.Button.RESTART ) {
 			this.x = ( js13k.w - 100 ) / 2;
-			this.y = js13k.h / 2 + 200;
+			this.y = js13k.h / 2 + 280;
 		}
 		else if( this.id == js13k.Button.TASTE ) {
 			this.x = js13k.w / 2 + 200;
@@ -99,6 +105,9 @@ js13k.Level = class {
 		/** @type {PotionOrder[]} */
 		this.doneOrders = [];
 
+		/** @type {PotionOrder[]} */
+		this.failedOrders = [];
+
 		/** @type {PotionOrder?} */
 		this.currentOrder = null;
 
@@ -134,16 +143,26 @@ js13k.Level = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	_drawIngredients( ctx ) {
-		const maxNum = 7;
-		const y = ( js13k.h - maxNum * 120 ) / 2;
+		const maxNum = 5;
+		const y = ( js13k.h - maxNum * 130 ) / 2;
+
+		ctx.fillStyle = '#ffffff1f';
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
 			ing.draw();
 			ing.x = 60;
-			ing.y = y + i * 120;
+			ing.y = y + i * 130;
 			ing.w = 100;
 			ing.h = 100;
+
+			ctx.save();
+			ctx.filter = 'blur(20px)';
+			ctx.beginPath();
+			ctx.arc( ing.x + 50, ing.y + 50, 50, 0, Math.PI * 2 );
+			ctx.fill();
+			ctx.restore();
+
 			ctx.drawImage( ing.cnv, ing.x, ing.y, ing.w, ing.h );
 		}
 	}
@@ -172,7 +191,6 @@ js13k.Level = class {
 		ctx.fillText( 'Welcome to the opening of Black Cat Potions!', x + 10, 210 );
 		ctx.fillText( 'Do not let your score drop below 1 or you can close your business again.', x + 10, 226 );
 		ctx.fillText( 'You have the ingredients, but alas! no recipe book.', x + 10, 242 );
-		// TODO: add button "Open Shop" and make that the click area
 
 		this.btnIntroStart.draw( ctx );
 	}
@@ -211,7 +229,9 @@ js13k.Level = class {
 		ctx.fillText( this.currentOrder.desc, x + 20, y + 20 );
 
 		// Info
-		ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 50 );
+		if( potion.ingredients.length > 0 ) {
+			ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 50 );
+		}
 	}
 
 
@@ -314,7 +334,10 @@ js13k.Level = class {
 		js13k.shuffle( list );
 
 		return list.map( potion => {
-			return { potion: potion, timeLimit: 10 };
+			return {
+				potion: potion,
+				timeLimit: ( potion.ingredients.length + 1 ) * 25,
+			};
 		} );
 	}
 
@@ -510,28 +533,39 @@ js13k.Level = class {
 			return;
 		}
 
-		if( this.isInside( pos, this.btnBottle ) ) {
-			// TODO: show description
-			return;
-		}
+		this.btnBottle.mouseover = false;
+		this.btnRestart.mouseover = false;
+		this.btnTasteTest.mouseover = false;
 
-		if( this.isInside( pos, this.btnRestart ) ) {
-			// TODO: show description
-			return;
-		}
-
-		if( this.isInside( pos, this.btnTasteTest ) ) {
-			// TODO: show description
-			return;
-		}
+		let targetFound = false;
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
+			ing.mouseover = false;
 
-			if( this.isInside( pos, ing ) ) {
+			if( !targetFound && this.isInside( pos, ing ) ) {
+				targetFound = true;
+				ing.mouseover = true;
 				// TODO: show name of ingredient
-				return;
 			}
+		}
+
+		if( !targetFound && this.isInside( pos, this.btnBottle ) ) {
+			targetFound = true;
+			this.btnBottle.mouseover = true;
+			// TODO: show description
+		}
+
+		if( !targetFound && this.isInside( pos, this.btnRestart ) ) {
+			targetFound = true;
+			this.btnRestart.mouseover = true;
+			// TODO: show description
+		}
+
+		if( !targetFound && this.isInside( pos, this.btnTasteTest ) ) {
+			targetFound = true;
+			this.btnTasteTest.mouseover = true;
+			// TODO: show description
 		}
 	}
 
@@ -616,7 +650,13 @@ js13k.Level = class {
 
 		this.score += result;
 		this.currentOrder.score = result;
-		this.doneOrders.push( this.currentOrder );
+
+		if( result > 0 ) {
+			this.doneOrders.push( this.currentOrder );
+		}
+		else {
+			this.failedOrders.push( this.currentOrder );
+		}
 
 		if( this.orders.length == 0 ) {
 			this.orders = this._generateOrders( this.stage );

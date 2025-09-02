@@ -9,12 +9,12 @@ js13k.Audio = {
 
 	/**
 	 *
-	 * @param {ArrayBuffer} arrayBuffer
-	 * @param {object}      options
-	 * @param {number?}     options.volume
+	 * @param {Uint8Array} audioData
+	 * @param {object}     options
+	 * @param {number?}    options.volume
 	 */
-	async play( arrayBuffer, options ) {
-		const buffer = await this.context.decodeAudioData( arrayBuffer.slice() );
+	async play( audioData, options ) {
+		const buffer = await this.context.decodeAudioData( audioData.buffer.slice() );
 
 		const gainNode = this.context.createGain();
 		gainNode.connect( this.context.destination );
