@@ -47,40 +47,6 @@ const js13k = {
 
 
 	/**
-	 *
-	 * @param {number} start
-	 * @param {number} target
-	 * @param {number} progress - [0.0, 1.0]
-	 * @returns {number}
-	 */
-	interpolate( start, target, progress ) {
-		return start * ( 1 - progress ) + target * progress;
-	},
-
-
-	/**
-	 *
-	 * @return {object?}
-	 */
-	loadGame() {
-		const json = localStorage.getItem( '2025_sd.save' );
-		return json ? JSON.parse( json ) : null;
-	},
-
-
-	/**
-	 *
-	 * @param {number} levelId
-	 */
-	saveGame( levelId ) {
-		localStorage.setItem(
-			'2025_sd.save',
-			JSON.stringify( { level: levelId } )
-		);
-	},
-
-
-	/**
 	 * https://stackoverflow.com/a/12646864
 	 * @param {any[]} arr
 	 */
