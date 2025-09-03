@@ -69,6 +69,10 @@ js13k.Potion = {
 			'I am close to a heatstroke!',
 		],
 
+		alternatives: [
+			js13k.Potion.Water,
+		],
+
 		/**
 		 *
 		 */
@@ -217,7 +221,7 @@ js13k.Potion = {
 		],
 
 		alternatives: [
-			js13k.MeditativePotion,
+			js13k.Potion.MeditativePotion,
 		],
 
 		/**
