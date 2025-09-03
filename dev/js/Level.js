@@ -35,7 +35,7 @@ js13k.Button = class {
 
 	/**
 	 *
-	 * @param {CanvasRenderingContext2D}
+	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
 		if( !this.cnv ) {
@@ -59,20 +59,40 @@ js13k.Button = class {
 			}
 		}
 
+		let text = null;
+
+		if( this.mouseover ) {
+			ctx.save();
+			ctx.shadowBlur = 30;
+			ctx.shadowColor = '#000';
+			ctx.fillStyle = '#fff';
+			ctx.font = 'italic 600 32px ' + js13k.FONT_SERIF;
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'top';
+		}
+
 		if( this.id == js13k.Button.INTRO ) {
 			this.x = ( js13k.w - this.w ) / 2;
 		}
 		else if( this.id == js13k.Button.BOTTLE ) {
 			this.x = js13k.w - 200;
 			this.y = ( js13k.h - 100 ) / 2;
+			text = 'Finish Potion';
 		}
 		else if( this.id == js13k.Button.RESTART ) {
 			this.x = ( js13k.w - 100 ) / 2;
 			this.y = js13k.h / 2 + 280;
+			text = 'Start Over';
 		}
 		else if( this.id == js13k.Button.TASTE ) {
 			this.x = js13k.w / 2 + 200;
 			this.y = ( js13k.h - 100 ) / 2;
+			text = 'Taste Test';
+		}
+
+		if( this.mouseover ) {
+			ctx.fillText( text, this.x + this.w / 2, this.y + this.h + 10 );
+			ctx.restore();
 		}
 
 		ctx.drawImage( this.cnv, this.x, this.y );
@@ -156,14 +176,19 @@ js13k.Level = class {
 			ing.w = 100;
 			ing.h = 100;
 
-			ctx.save();
-			ctx.filter = 'blur(20px)';
-			ctx.beginPath();
-			ctx.arc( ing.x + 50, ing.y + 50, 50, 0, Math.PI * 2 );
-			ctx.fill();
-			ctx.restore();
-
 			ctx.drawImage( ing.cnv, ing.x, ing.y, ing.w, ing.h );
+
+			if( ing.mouseover ) {
+				ctx.save();
+				ctx.shadowBlur = 30;
+				ctx.shadowColor = '#000';
+				ctx.fillStyle = '#fff';
+				ctx.font = 'italic 600 32px ' + js13k.FONT_SERIF;
+				ctx.textAlign = 'left';
+				ctx.textBaseline = 'middle';
+				ctx.fillText( ing.name, ing.x + ing.w + 10, ing.y + ing.h / 2 );
+				ctx.restore();
+			}
 		}
 	}
 
@@ -546,26 +571,22 @@ js13k.Level = class {
 			if( !targetFound && this.isInside( pos, ing ) ) {
 				targetFound = true;
 				ing.mouseover = true;
-				// TODO: show name of ingredient
 			}
 		}
 
 		if( !targetFound && this.isInside( pos, this.btnBottle ) ) {
 			targetFound = true;
 			this.btnBottle.mouseover = true;
-			// TODO: show description
 		}
 
 		if( !targetFound && this.isInside( pos, this.btnRestart ) ) {
 			targetFound = true;
 			this.btnRestart.mouseover = true;
-			// TODO: show description
 		}
 
 		if( !targetFound && this.isInside( pos, this.btnTasteTest ) ) {
 			targetFound = true;
 			this.btnTasteTest.mouseover = true;
-			// TODO: show description
 		}
 	}
 
