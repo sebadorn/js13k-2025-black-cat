@@ -48,6 +48,7 @@ js13k.CatFg = class extends js13k.LevelObject {
 	 */
 	draw( ctx ) {
 		if( this._needsRedraw ) {
+			this.ctx.clearRect( 0, 0, this.w, this.h );
 			this._drawPaws();
 		}
 

@@ -177,6 +177,8 @@ js13k.CatBg = class extends js13k.LevelObject {
 	 */
 	draw( ctx ) {
 		if( this._needsRedraw ) {
+			this.ctx.clearRect( 0, 0, this.w, this.h );
+
 			const bodyW = this.w * 0.4;
 
 			// Body

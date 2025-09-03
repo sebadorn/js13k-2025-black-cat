@@ -15,20 +15,6 @@ js13k.Potion = {
 			"I'm thirsty.",
 		],
 
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
-
 	},
 
 
@@ -41,20 +27,6 @@ js13k.Potion = {
 		desc: [
 			'The wind is so cold. I need something to warm me up.',
 		],
-
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
 
 	},
 
@@ -73,20 +45,6 @@ js13k.Potion = {
 			return [js13k.Potion.Water];
 		},
 
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
-
 	},
 
 
@@ -99,20 +57,6 @@ js13k.Potion = {
 		desc: [
 			'Ugh, I feel sick...',
 		],
-
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
 
 	},
 
@@ -130,20 +74,6 @@ js13k.Potion = {
 			'I need something to calm me down.',
 		],
 
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
-
 	},
 
 
@@ -160,20 +90,6 @@ js13k.Potion = {
 			'I just finished my workout. Got some energizer?',
 		],
 
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
-
 	},
 
 
@@ -189,20 +105,6 @@ js13k.Potion = {
 		desc: [
 			"I'm losing my connection to myself. Like I'm watching myself from behind.",
 		],
-
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
 
 	},
 
@@ -224,20 +126,6 @@ js13k.Potion = {
 			return [js13k.Potion.MeditativePotion];
 		},
 
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
-
 	},
 
 
@@ -254,20 +142,6 @@ js13k.Potion = {
 		desc: [
 			'My emotions feel so... flat. I want to try how *more* feels like.',
 		],
-
-		/**
-		 *
-		 */
-		draw: function() {
-			if( this.cnv ) {
-				return;
-			}
-
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
-
-			this.ctx.fillStyle = '#00f';
-			this.ctx.fillRect( 0, 0, 100, 100 );
-		},
 
 	},
 

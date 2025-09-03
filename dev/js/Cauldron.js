@@ -65,6 +65,8 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	 */
 	draw( ctx ) {
 		if( this._needsRedraw ) {
+			this.ctx.clearRect( 0, 0, this.w, this.h );
+
 			this._needsRedraw = false;
 
 			let x = this.w / 2;

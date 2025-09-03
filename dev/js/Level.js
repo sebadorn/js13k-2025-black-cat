@@ -61,16 +61,6 @@ js13k.Button = class {
 
 		let text = null;
 
-		if( this.mouseover ) {
-			ctx.save();
-			ctx.shadowBlur = 30;
-			ctx.shadowColor = '#000';
-			ctx.fillStyle = '#fff';
-			ctx.font = 'italic 600 32px ' + js13k.FONT_SERIF;
-			ctx.textAlign = 'center';
-			ctx.textBaseline = 'top';
-		}
-
 		if( this.id == js13k.Button.INTRO ) {
 			this.x = ( js13k.w - this.w ) / 2;
 		}
@@ -90,12 +80,11 @@ js13k.Button = class {
 			text = 'Taste Test';
 		}
 
-		if( this.mouseover ) {
-			ctx.fillText( text, this.x + this.w / 2, this.y + this.h + 10 );
-			ctx.restore();
-		}
-
 		ctx.drawImage( this.cnv, this.x, this.y );
+
+		if( this.mouseover ) {
+			js13k.Level.drawMouseoverText( ctx, text, this.x + this.w / 2, this.y + this.h + 10 );
+		}
 	}
 
 
@@ -170,25 +159,13 @@ js13k.Level = class {
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
-			ing.draw();
-			ing.x = 60;
-			ing.y = y + i * 130;
-			ing.w = 100;
-			ing.h = 100;
+			// ing.x = 60;
+			// ing.y = y + i * 130;
+			// ing.w = 100;
+			// ing.h = 100;
+			ing.draw( ctx );
 
-			ctx.drawImage( ing.cnv, ing.x, ing.y, ing.w, ing.h );
-
-			if( ing.mouseover ) {
-				ctx.save();
-				ctx.shadowBlur = 30;
-				ctx.shadowColor = '#000';
-				ctx.fillStyle = '#fff';
-				ctx.font = 'italic 600 32px ' + js13k.FONT_SERIF;
-				ctx.textAlign = 'left';
-				ctx.textBaseline = 'middle';
-				ctx.fillText( ing.name, ing.x + ing.w + 10, ing.y + ing.h / 2 );
-				ctx.restore();
-			}
+			// ctx.drawImage( ing.cnv, ing.x, ing.y, ing.w, ing.h );
 		}
 	}
 
@@ -431,6 +408,26 @@ js13k.Level = class {
 		if( this.stage == 0 ) {
 			this._drawIntro( ctx );
 		}
+	}
+
+
+	/**
+	 *
+	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {string} text
+	 * @param {number} x
+	 * @param {number} y
+	 */
+	static drawMouseoverText( ctx, text, x, y ) {
+		ctx.save();
+		ctx.shadowBlur = 30;
+		ctx.shadowColor = '#000';
+		ctx.fillStyle = '#fff';
+		ctx.font = 'italic 600 32px ' + js13k.FONT_SERIF;
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'top';
+		ctx.fillText( text, x, y );
+		ctx.restore();
 	}
 
 
