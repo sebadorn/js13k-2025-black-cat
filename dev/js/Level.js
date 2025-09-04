@@ -51,11 +51,87 @@ js13k.Button = class {
 			else {
 				this.ctx.fillStyle = '#000';
 				this.ctx.strokeStyle = '#fff';
-				this.ctx.lineWidth = 2;
+				this.ctx.lineWidth = 3;
 				this.ctx.beginPath();
 				this.ctx.arc( this.w / 2, this.h / 2, this.w / 2 - 2, 0, Math.PI * 2 );
 				this.ctx.fill();
 				this.ctx.stroke();
+
+				if( this.id == js13k.Button.BOTTLE ) {
+					const w3 = this.w / 3;
+
+					this.ctx.fillStyle = '#1e61ad';
+					this.ctx.beginPath();
+					this.ctx.moveTo( w3 - 10, 50 );
+					this.ctx.lineTo( w3 * 2 + 6, 50 );
+					this.ctx.lineTo( w3 + 7, this.h - 18 );
+					this.ctx.lineTo( w3 - 16, this.h - 40 );
+					this.ctx.closePath();
+					this.ctx.fill();
+
+					this.ctx.save();
+					this.ctx.translate( this.w / 2, this.h / 2 );
+					this.ctx.rotate( 45 * Math.PI / 180 );
+					this.ctx.translate( -this.w / 2, -this.h / 2 );
+
+					this.ctx.beginPath();
+					this.ctx.moveTo( w3, this.h - 20 );
+					this.ctx.lineTo( w3 * 2, this.h - 20 );
+					this.ctx.lineTo( w3 * 2, 35 );
+					this.ctx.lineTo( w3 * 1.7, 35 );
+					this.ctx.lineTo( w3 * 1.7, 15 );
+					this.ctx.lineTo( w3 * 1.3, 15 );
+					this.ctx.lineTo( w3 * 1.3, 35 );
+					this.ctx.lineTo( w3, 35 );
+					this.ctx.closePath();
+					this.ctx.stroke();
+
+					this.ctx.fillStyle = '#5e3f1c';
+					this.ctx.fillRect( w3 * 1.3 + 1.5, 13, w3 * 0.4 - 3, 10 );
+
+					this.ctx.restore();
+				}
+				else if( this.id == js13k.Button.RESTART ) {
+					// Curved arrow
+					this.ctx.beginPath();
+					this.ctx.arc( this.w / 2, this.h / 2, this.w / 2 - 25, Math.PI * 0.75, Math.PI * 1.5 );
+					this.ctx.moveTo( this.w / 2 - 8, 15 );
+					this.ctx.lineTo( this.w / 2 + 2, 25 );
+					this.ctx.lineTo( this.w / 2 - 8, 35 );
+					this.ctx.stroke();
+
+					// Curved arrow
+					this.ctx.beginPath();
+					this.ctx.arc( this.w / 2, this.h / 2, this.w / 2 - 25, Math.PI * 1.75, Math.PI / 2 );
+					this.ctx.moveTo( this.w / 2 + 8, this.h - 15 );
+					this.ctx.lineTo( this.w / 2 - 2, this.h - 25 );
+					this.ctx.lineTo( this.w / 2 + 8, this.h - 35 );
+					this.ctx.stroke();
+				}
+				else if( this.id == js13k.Button.TASTE ) {
+					const rx = 14;
+
+					// Tongue
+					this.ctx.fillStyle = '#d00';
+					this.ctx.beginPath();
+					this.ctx.rect( this.w / 3 + 2, this.h / 4 + 2, this.w / 3 - 4, this.h / 3 );
+					this.ctx.arc( this.w / 2, this.h / 2 + 10, this.w / 6 - 2, 0, Math.PI * 2 );
+					this.ctx.fill();
+
+					// Mouth
+					this.ctx.fillStyle = '#000';
+					this.ctx.strokeStyle = '#fff';
+
+					this.ctx.beginPath();
+					this.ctx.ellipse( this.w / 2 - rx, this.h / 4, rx, 10, 0, 0, Math.PI * 0.9 );
+					this.ctx.fill();
+					this.ctx.stroke();
+
+					this.ctx.beginPath();
+					this.ctx.ellipse( this.w / 2 + rx, this.h / 4, rx, 10, 0, Math.PI * 0.1, Math.PI );
+					this.ctx.fill();
+					this.ctx.stroke();
+				}
 			}
 		}
 
@@ -80,7 +156,9 @@ js13k.Button = class {
 			text = 'Taste Test';
 		}
 
+		ctx.globalAlpha = ( this.id == js13k.Button.INTRO || this.mouseover ) ? 1 : 0.4;
 		ctx.drawImage( this.cnv, this.x, this.y );
+		ctx.globalAlpha = 1;
 
 		if( this.mouseover ) {
 			js13k.Level.drawMouseoverText( ctx, text, this.x + this.w / 2, this.y + this.h + 10 );
@@ -152,20 +230,11 @@ js13k.Level = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	_drawIngredients( ctx ) {
-		const maxNum = 5;
-		const y = ( js13k.h - maxNum * 130 ) / 2;
-
-		ctx.fillStyle = '#ffffff1f';
+		// TODO: draw shelf/shelves for ingredients
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
-			// ing.x = 60;
-			// ing.y = y + i * 130;
-			// ing.w = 100;
-			// ing.h = 100;
 			ing.draw( ctx );
-
-			// ctx.drawImage( ing.cnv, ing.x, ing.y, ing.w, ing.h );
 		}
 	}
 
