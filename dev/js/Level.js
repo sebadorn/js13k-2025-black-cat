@@ -84,9 +84,13 @@ js13k.Button = class {
 					this.ctx.lineTo( w3 * 1.3, 35 );
 					this.ctx.lineTo( w3, 35 );
 					this.ctx.closePath();
+
+					this.ctx.fillStyle = '#ffffff2f';
+					this.ctx.fill();
+
 					this.ctx.stroke();
 
-					this.ctx.fillStyle = '#5e3f1c';
+					this.ctx.fillStyle = '#70430f';
 					this.ctx.fillRect( w3 * 1.3 + 1.5, 13, w3 * 0.4 - 3, 10 );
 
 					this.ctx.restore();
@@ -230,7 +234,9 @@ js13k.Level = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	_drawIngredients( ctx ) {
-		// TODO: draw shelf/shelves for ingredients
+		// Shelves
+		ctx.fillStyle = '#683f24';
+		ctx.fillRect( 60, 580, 440, 25 );
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
@@ -440,6 +446,7 @@ js13k.Level = class {
 				js13k.IngredientWarm,
 				js13k.IngredientCold,
 				js13k.IngredientLife,
+				js13k.IngredientEmotion, // TODO: remove
 			);
 		}
 

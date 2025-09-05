@@ -143,6 +143,7 @@ js13k.IngredientLife = {
 
 			for( let i = 1; i < 7; i++ ) {
 				const h = this.h * ( i % 2 ? 1 : 0.8 );
+				this.ctx.filter = `brightness(${0.8 + i * 0.05})`;
 				this._drawLeaf( this.ctx, step * i - 40, i % 2 ? -5 : -15, h - 30 );
 			}
 		}
@@ -163,19 +164,65 @@ js13k.IngredientEmotion = {
 
 	name: 'Mind Mushroom',
 
+	get x() {
+		return js13k.w - this.w - 110;
+	},
+
+	get y() {
+		return js13k.h - this.h;
+	},
+
+	w: 440,
+	h: 200,
+
 
 	/**
 	 *
+	 * @private
+	 * @param {number} x
+	 * @param {number} h
+	 * @param {number} w
+	 * @param {number} brightness
 	 */
-	draw() {
-		if( this.cnv ) {
-			return;
-		}
+	_drawMushroom( x, h, w, brightness ) {
+		const y = this.h - h;
 
-		[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
+		this.ctx.filter = `brightness(${brightness})`;
+
+		this.ctx.fillStyle = '#ddd';
+		this.ctx.fillRect( x, this.h - h, w, h );
 
 		this.ctx.fillStyle = '#8143a5';
-		this.ctx.fillRect( 0, 0, 100, 100 );
+		this.ctx.beginPath();
+		this.ctx.ellipse( x + w / 2, y, w * 2, w * 1.5, 0, 0, Math.PI, true );
+		this.ctx.fill();
+	},
+
+
+	/**
+	 *
+	 * @param {CanvasRenderingContext2D} ctx
+	 */
+	draw( ctx ) {
+		if( !this.cnv ) {
+			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
+
+			this._drawMushroom( 135, 30, 25, 0.65 );
+			this._drawMushroom( 260, 20, 25, 0.65 );
+			this._drawMushroom( 60, 85, 30, 0.85 );
+			this._drawMushroom( 190, 70, 50, 0.9 );
+			this._drawMushroom( 320, 80, 30, 0.95 );
+			this._drawMushroom( 30, 40, 10, 1 );
+			this._drawMushroom( 110, 45, 20, 1 );
+			this._drawMushroom( 230, 35, 20, 1.1 );
+			this._drawMushroom( 360, 25, 15, 1 );
+		}
+
+		ctx.drawImage( this.cnv, this.x, this.y );
+
+		if( this.mouseover ) {
+			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y );
+		}
 	},
 
 
