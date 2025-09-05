@@ -4,7 +4,12 @@
 js13k.IngredientWarm = {
 
 
-	name: 'Lizard Tail',
+	name: 'Wild Berries',
+
+	x: 300,
+	y: 430,
+	w: 150,
+	h: 200,
 
 
 	/**
@@ -13,30 +18,64 @@ js13k.IngredientWarm = {
 	 */
 	draw( ctx ) {
 		if( !this.cnv ) {
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
+			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
-			this.ctx.fillStyle = '#c47816';
+			// Bottle glas
+			this.ctx.lineWidth = 4;
+			this.ctx.strokeStyle = '#fff';
 			this.ctx.beginPath();
-			this.ctx.moveTo( 60, 15 );
-			this.ctx.quadraticCurveTo( 0, 55, 30, 85 );
-			this.ctx.quadraticCurveTo( 30, 50, 80, 40 );
+			this.ctx.moveTo( 2, 42 );
+			this.ctx.lineTo( 2, this.h - 52 );
+			this.ctx.lineTo( this.w - 2, this.h - 52 );
+			this.ctx.lineTo( this.w - 2, 42 );
+			this.ctx.lineTo( this.w - 40, 42 );
+			this.ctx.lineTo( this.w - 40, 12 );
+			this.ctx.lineTo( 40, 12 );
+			this.ctx.lineTo( 40, 42 );
 			this.ctx.closePath();
-			this.ctx.fill();
+			this.ctx.stroke();
+
+			// Cork
+			this.ctx.fillStyle = '#61401a';
+			this.ctx.fillRect( 42, 0, this.w - 84, 52 );
+
+			// Content
+			const points = [
+				// top row
+				[15, 80], [35, 90], [55, 96], [75, 96], [95, 96], [115, 90], [135, 80],
+				// second row
+				[15, 100], [35, 110], [55, 116], [75, 116], [95, 116], [115, 110], [135, 100],
+				// third row
+				[15, 120], [35, 130], [55, 136], [75, 136], [95, 136], [115, 130], [135, 120],
+				// corners
+				[17, 136], [133, 136],
+				// darker ones
+				[25, 85, 0.9], [50, 90, 0.9], [80, 100, 0.9], [105, 95, 0.9], [130, 85, 0.9],
+				[20, 105, 0.9], [40, 108, 0.9], [63, 112, 0.9], [98, 114, 0.9], [120, 106, 0.9],
+				[22, 125, 0.9], [42, 135, 0.9], [67, 132, 0.9], [85, 125, 0.9], [110, 135, 0.9], [135, 128, 0.9],
+			];
+
+			for( let i = 0; i < points.length; i++ ) {
+				const p = points[i];
+				this.ctx.filter = `brightness(${p[2] || 1})`;
+
+				this.ctx.fillStyle = '#a81646';
+				this.ctx.beginPath();
+				this.ctx.arc( p[0], p[1], 10, 0, Math.PI * 2 );
+				this.ctx.fill();
+
+				this.ctx.fillStyle = '#ffffff17';
+				this.ctx.beginPath();
+				this.ctx.arc( p[0] + 4, p[1] - 4, 5, 0, Math.PI * 2 );
+				this.ctx.fill();
+			}
 		}
 
-		// ctx.drawImage( this.cnv, this.x, this.y );
+		ctx.drawImage( this.cnv, this.x, this.y );
 
-		// if( this.mouseover ) {
-		// 	ctx.save();
-		// 	ctx.shadowBlur = 30;
-		// 	ctx.shadowColor = '#000';
-		// 	ctx.fillStyle = '#fff';
-		// 	ctx.font = 'italic 600 32px ' + js13k.FONT_SERIF;
-		// 	ctx.textAlign = 'left';
-		// 	ctx.textBaseline = 'middle';
-		// 	ctx.fillText( this.name, this.x + this.w + 10, this.y + this.h / 2 );
-		// 	ctx.restore();
-		// }
+		if( this.mouseover ) {
+			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 10 );
+		}
 	},
 
 
@@ -162,7 +201,7 @@ js13k.IngredientLife = {
 js13k.IngredientEmotion = {
 
 
-	name: 'Mind Mushroom',
+	name: 'Curious Mushrooms',
 
 	get x() {
 		return js13k.w - this.w - 110;

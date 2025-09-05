@@ -85,13 +85,13 @@ js13k.Button = class {
 					this.ctx.lineTo( w3, 35 );
 					this.ctx.closePath();
 
-					this.ctx.fillStyle = '#ffffff2f';
+					this.ctx.fillStyle = '#ffffff3f';
 					this.ctx.fill();
 
 					this.ctx.stroke();
 
 					this.ctx.fillStyle = '#70430f';
-					this.ctx.fillRect( w3 * 1.3 + 1.5, 13, w3 * 0.4 - 3, 10 );
+					this.ctx.fillRect( w3 * 1.3 + 1.5, 9, w3 * 0.4 - 3, 12 );
 
 					this.ctx.restore();
 				}
