@@ -5,11 +5,12 @@ js13k.IngredientWarm = {
 
 
 	name: 'Wild Berries',
+	fluidColor: '#a81646',
 
-	x: 300,
+	x: 320,
 	y: 430,
 	w: 150,
-	h: 200,
+	h: 150,
 
 
 	/**
@@ -25,8 +26,8 @@ js13k.IngredientWarm = {
 			this.ctx.strokeStyle = '#fff';
 			this.ctx.beginPath();
 			this.ctx.moveTo( 2, 42 );
-			this.ctx.lineTo( 2, this.h - 52 );
-			this.ctx.lineTo( this.w - 2, this.h - 52 );
+			this.ctx.lineTo( 2, this.h - 2 );
+			this.ctx.lineTo( this.w - 2, this.h - 2 );
 			this.ctx.lineTo( this.w - 2, 42 );
 			this.ctx.lineTo( this.w - 40, 42 );
 			this.ctx.lineTo( this.w - 40, 12 );
@@ -74,7 +75,7 @@ js13k.IngredientWarm = {
 		ctx.drawImage( this.cnv, this.x, this.y );
 
 		if( this.mouseover ) {
-			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 10 );
+			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 15 );
 		}
 	},
 
@@ -85,7 +86,13 @@ js13k.IngredientWarm = {
 js13k.IngredientCold = {
 
 
-	name: 'Blue Peach',
+	name: 'Sparkling Salt',
+	fluidColor: '#649fa3',
+
+	x: 100,
+	y: 430,
+	w: 180,
+	h: 150,
 
 
 	/**
@@ -93,17 +100,27 @@ js13k.IngredientCold = {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
-		if( this.cnv ) {
-			return;
+		if( !this.cnv ) {
+			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
+
+			// Content
+			this.ctx.fillStyle = '#d3edee';
+			this.ctx.beginPath();
+			this.ctx.ellipse( this.w / 2, this.h / 2 + 20, this.w / 2 - 20, this.h / 2 - 40, 0, 0, Math.PI, true );
+			this.ctx.fill();
+
+			// Bowl
+			this.ctx.fillStyle = '#4d5b6e';
+			this.ctx.beginPath();
+			this.ctx.ellipse( this.w / 2, this.h / 2 + 10, this.w / 2, this.h / 2, 0, 0, Math.PI );
+			this.ctx.fill();
 		}
 
-		[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
+		ctx.drawImage( this.cnv, this.x, this.y );
 
-		this.ctx.fillStyle = '#3c73c5';
-		this.ctx.beginPath();
-		this.ctx.ellipse( 45, 50, 30, 30, 0, 0, Math.PI * 2 );
-		this.ctx.ellipse( 55, 50, 30, 30, 0, 0, Math.PI * 2 );
-		this.ctx.fill();
+		if( this.mouseover ) {
+			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 15 );
+		}
 	},
 
 
@@ -114,6 +131,7 @@ js13k.IngredientLife = {
 
 
 	name: 'Dried Herbs',
+	fluidColor: '#074',
 
 	x: 140,
 	y: 0,
@@ -202,6 +220,7 @@ js13k.IngredientEmotion = {
 
 
 	name: 'Curious Mushrooms',
+	fluidColor: '#8143a5',
 
 	get x() {
 		return js13k.w - this.w - 110;
@@ -271,21 +290,81 @@ js13k.IngredientEmotion = {
 js13k.IngredientSupercharge = {
 
 
-	name: 'Mockingbird Feather',
+	name: 'Feather of this Strange Bird',
+	fluidColor: '#e4d944',
+
+	x: 180,
+
+	get y() {
+		return js13k.h - this.h;
+	},
+
+	w: 220,
+	h: 220,
 
 
 	/**
 	 *
+	 * @param {CanvasRenderingContext2D} ctx
 	 */
-	draw() {
-		if( this.cnv ) {
-			return;
+	draw( ctx ) {
+		if( !this.cnv ) {
+			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
+
+			this.ctx.strokeStyle = '#61391f';
+			this.ctx.lineWidth = 8;
+
+			// Wooden stand
+			this.ctx.beginPath();
+			this.ctx.moveTo( this.w / 2 + 4, this.h - 100 );
+			this.ctx.lineTo( this.w / 2 + 4, this.h );
+			this.ctx.moveTo( 68, this.h - 100 );
+			this.ctx.lineTo( this.w - 60, this.h - 100 );
+			this.ctx.stroke();
+
+			// Feet
+			this.ctx.fillStyle = '#cf7c2f';
+			this.ctx.fillRect( 85, this.h - 120, 6, 26 );
+			this.ctx.fillRect( this.w - 85, this.h - 120, 6, 26 );
+
+			// Body
+			this.ctx.fillStyle = '#e4d944';
+			this.ctx.beginPath();
+			this.ctx.ellipse( this.w / 2 + 4, this.h - 160, 60, 50, 0, 0, Math.PI * 2 );
+			this.ctx.fill();
+
+			// Wings
+			this.ctx.beginPath();
+			this.ctx.moveTo( 54, this.h - 160 );
+			this.ctx.lineTo( 54, this.h - 120 );
+			this.ctx.lineTo( 114, this.h - 160 );
+			this.ctx.fill();
+			this.ctx.beginPath();
+			this.ctx.moveTo( this.w - 46, this.h - 160 );
+			this.ctx.lineTo( this.w - 46, this.h - 120 );
+			this.ctx.lineTo( this.w - 106, this.h - 160 );
+			this.ctx.fill();
+
+			// Beak
+			this.ctx.fillStyle = '#cf7c2f';
+			this.ctx.beginPath();
+			this.ctx.moveTo( this.w / 2 - 1, this.h - 165 );
+			this.ctx.lineTo( this.w / 2 + 9, this.h - 165 );
+			this.ctx.lineTo( this.w / 2 + 4, this.h - 150 );
+			this.ctx.closePath();
+			this.ctx.fill();
+
+			// Eyes
+			this.ctx.fillStyle = '#000';
+			this.ctx.fillRect( 75, this.h - 170, 12, 3 );
+			this.ctx.fillRect( this.w - 80, this.h - 170, 12, 3 );
 		}
 
-		[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( 100, 100 );
+		ctx.drawImage( this.cnv, this.x, this.y );
 
-		this.ctx.fillStyle = '#e4d944';
-		this.ctx.fillRect( 0, 0, 100, 100 );
+		if( this.mouseover ) {
+			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y - 40 );
+		}
 	},
 
 

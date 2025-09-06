@@ -381,7 +381,7 @@ js13k.Level = class {
 		return list.map( potion => {
 			return {
 				potion: potion,
-				timeLimit: ( potion.ingredients.length + 1 ) * 25,
+				timeLimit: 90 - this.stage * 15,
 			};
 		} );
 	}
@@ -415,6 +415,7 @@ js13k.Level = class {
 				js13k.IngredientCold,
 				js13k.IngredientLife,
 				js13k.IngredientEmotion, // TODO: remove
+				js13k.IngredientSupercharge, // TODO: remove
 			);
 		}
 

@@ -34,12 +34,14 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	_drawFluid( x, y ) {
 		y += this.h * 0.08;
 
-		if( this.contents.length > 0 ) {
-			this.fluidColor = '#074';
-		}
 		// Just water
-		else {
-			this.fluidColor = '#2d7feb';
+		this.fluidColor = '#2d7feb';
+
+		if( this.contents.length == 1 ) {
+			this.fluidColor = this.contents[0].fluidColor;
+		}
+		else if( this.contents.length == 2 ) {
+			// TODO:
 		}
 
 		this.ctx.fillStyle = this.fluidColor;
