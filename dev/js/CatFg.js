@@ -5,7 +5,6 @@ js13k.CatFg = class extends js13k.LevelObject {
 
 
 	static STATE_IDLE = 1;
-	static STATE_LICK = 2;
 
 
 	/**
@@ -53,24 +52,6 @@ js13k.CatFg = class extends js13k.LevelObject {
 		}
 
 		ctx.drawImage( this.cnv, this.calcCenterX(), js13k.h - this.level.cauldron.h );
-	}
-
-
-	/**
-	 *
-	 * @param {function} cb
-	 */
-	lick( cb ) {
-		this.animation = new js13k.Animation(
-			1,
-			progress => {
-				// TODO: animate lick
-			},
-			() => {
-				this.animation = null;
-				cb();
-			},
-		);
 	}
 
 

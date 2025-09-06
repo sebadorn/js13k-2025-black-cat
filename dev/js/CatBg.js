@@ -5,7 +5,6 @@ js13k.CatBg = class extends js13k.LevelObject {
 
 
 	static STATE_IDLE = 1;
-	static STATE_REACT = 2;
 
 
 	/**
@@ -194,26 +193,6 @@ js13k.CatBg = class extends js13k.LevelObject {
 			this.cnv,
 			this.calcCenterX(),
 			js13k.h - this.level.cauldron.h - this.h / 2 + this.offsetY
-		);
-	}
-
-
-	/**
-	 *
-	 * @param {Ingredient[]} contents
-	 * @param {function}     cb
-	 */
-	react( contents, cb ) {
-		this.animation = new js13k.Animation(
-			1.5,
-			progress => {
-				// TODO: animate reaction
-			},
-			() => {
-				this.animation = null;
-				this.state = js13k.CatBg.STATE_IDLE;
-				cb();
-			},
 		);
 	}
 

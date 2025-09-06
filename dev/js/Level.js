@@ -7,7 +7,6 @@ js13k.Button = class {
 	static INTRO = 1;
 	static BOTTLE = 2;
 	static RESTART = 3;
-	static TASTE = 4;
 
 
 	/**
@@ -112,30 +111,6 @@ js13k.Button = class {
 					this.ctx.lineTo( this.w / 2 + 8, this.h - 35 );
 					this.ctx.stroke();
 				}
-				else if( this.id == js13k.Button.TASTE ) {
-					const rx = 14;
-
-					// Tongue
-					this.ctx.fillStyle = '#d00';
-					this.ctx.beginPath();
-					this.ctx.rect( this.w / 3 + 2, this.h / 4 + 2, this.w / 3 - 4, this.h / 3 );
-					this.ctx.arc( this.w / 2, this.h / 2 + 10, this.w / 6 - 2, 0, Math.PI * 2 );
-					this.ctx.fill();
-
-					// Mouth
-					this.ctx.fillStyle = '#000';
-					this.ctx.strokeStyle = '#fff';
-
-					this.ctx.beginPath();
-					this.ctx.ellipse( this.w / 2 - rx, this.h / 4, rx, 10, 0, 0, Math.PI * 0.9 );
-					this.ctx.fill();
-					this.ctx.stroke();
-
-					this.ctx.beginPath();
-					this.ctx.ellipse( this.w / 2 + rx, this.h / 4, rx, 10, 0, Math.PI * 0.1, Math.PI );
-					this.ctx.fill();
-					this.ctx.stroke();
-				}
 			}
 		}
 
@@ -153,11 +128,6 @@ js13k.Button = class {
 			this.x = ( js13k.w - 100 ) / 2;
 			this.y = js13k.h / 2 + 280;
 			text = 'Start Over';
-		}
-		else if( this.id == js13k.Button.TASTE ) {
-			this.x = js13k.w / 2 + 200;
-			this.y = ( js13k.h - 100 ) / 2;
-			text = 'Taste Test';
 		}
 
 		ctx.globalAlpha = ( this.id == js13k.Button.INTRO || this.mouseover ) ? 1 : 0.4;
@@ -208,7 +178,6 @@ js13k.Level = class {
 		this.btnIntroStart = new js13k.Button( js13k.Button.INTRO, 0, 400 - 60, 200, 40 );
 		this.btnBottle = new js13k.Button( js13k.Button.BOTTLE );
 		this.btnRestart = new js13k.Button( js13k.Button.RESTART );
-		this.btnTasteTest = new js13k.Button( js13k.Button.TASTE );
 
 		this.catBg = new js13k.CatBg( this );
 		this.catFg = new js13k.CatFg( this );
@@ -224,7 +193,6 @@ js13k.Level = class {
 	_drawButtons( ctx ) {
 		this.btnBottle.draw( ctx );
 		this.btnRestart.draw( ctx );
-		this.btnTasteTest.draw( ctx );
 	}
 
 
@@ -605,12 +573,6 @@ js13k.Level = class {
 			return;
 		}
 
-		if( this.isInside( pos, this.btnTasteTest ) ) {
-			this._clickingDisabled = true;
-			this.tasteTest( () => this._clickingDisabled = false );
-			return;
-		}
-
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
 
@@ -633,7 +595,6 @@ js13k.Level = class {
 
 		this.btnBottle.mouseover = false;
 		this.btnRestart.mouseover = false;
-		this.btnTasteTest.mouseover = false;
 
 		let targetFound = false;
 
@@ -655,11 +616,6 @@ js13k.Level = class {
 		if( !targetFound && this.isInside( pos, this.btnRestart ) ) {
 			targetFound = true;
 			this.btnRestart.mouseover = true;
-		}
-
-		if( !targetFound && this.isInside( pos, this.btnTasteTest ) ) {
-			targetFound = true;
-			this.btnTasteTest.mouseover = true;
 		}
 	}
 
@@ -688,20 +644,6 @@ js13k.Level = class {
 
 		// Wrong potion
 		return -1;
-	}
-
-
-	/**
-	 *
-	 * @param {function} cb
-	 */
-	tasteTest( cb ) {
-		this.catBg.state = js13k.CatBg.STATE_REACT;
-
-		// TODO: animation of cat licking fluid, then showing a reaction indicating the current potion effect
-		this.catFg.lick( () => {
-			this.catBg.react( this.cauldron.contents, cb );
-		} );
 	}
 
 
