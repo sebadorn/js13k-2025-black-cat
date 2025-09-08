@@ -23,8 +23,6 @@ js13k.Renderer = {
 	center: [0, 0],
 	offset: [0, 0],
 	scale: 1,
-	translateX: 0,
-	translateY: 0,
 
 
 	// /**
@@ -61,7 +59,7 @@ js13k.Renderer = {
 	 */
 	draw() {
 		this.clear();
-		this.ctx.setTransform( this.scale, 0, 0, this.scale, this.translateX, this.translateY );
+		this.ctx.setTransform( this.scale, 0, 0, this.scale, 0, 0 );
 
 		this.level?.draw( this.ctx );
 		// this._drawCursor();
@@ -175,30 +173,6 @@ js13k.Renderer = {
 	 */
 	pause() {
 		this.isPaused = true;
-	},
-
-
-	/**
-	 *
-	 * @param {HTMLCanvasElement} cnv
-	 * @param {CanvasRenderingContext2D} ctx
-	 * @param {number} [factor = 10]
-	 */
-	pixelate( cnv, ctx, factor = 10 ) {
-		if( js13k.IMAGE_SMOOTHING ) {
-			return;
-		}
-
-		const smallW = cnv.width / factor;
-		const smallH = cnv.height / factor;
-
-		const [cnvSmall, ctxSmall] = this.getOffscreenCanvas( smallW, smallH );
-
-		ctxSmall.clearRect( 0, 0, smallW, smallH );
-		ctxSmall.drawImage( cnv, 0, 0, smallW, smallH );
-
-		ctx.clearRect( 0, 0, cnv.width, cnv.height );
-		ctx.drawImage( cnvSmall, 0, 0, cnv.width, cnv.height );
 	},
 
 
