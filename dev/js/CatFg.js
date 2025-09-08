@@ -4,9 +4,6 @@
 js13k.CatFg = class extends js13k.LevelObject {
 
 
-	static STATE_IDLE = 1;
-
-
 	/**
 	 *
 	 * @param {js13k.Level} level
@@ -15,6 +12,7 @@ js13k.CatFg = class extends js13k.LevelObject {
 		super( level, 800, 600 );
 
 		this.state = js13k.CatFg.STATE_IDLE;
+		this.timer = 0;
 
 		// TODO: remove
 		/** @type {HTMLCanvasElement} */
@@ -29,14 +27,12 @@ js13k.CatFg = class extends js13k.LevelObject {
 	 * @private
 	 */
 	_drawPaws() {
-		let x = 240;
-		let y = 120;
-		let rx = 40;
-		let ry = 48;
-		this.ctx.fillStyle = '#000';
+		const rx = 48;
+		const ry = 40;
+		this.ctx.fillStyle = '#111';
 		this.ctx.beginPath();
-		this.ctx.ellipse( x, y, rx, ry, 0, 0, Math.PI * 2 );
-		this.ctx.ellipse( this.w - x, y, rx, ry, 0, 0, Math.PI * 2 );
+		this.ctx.ellipse( 380, 120, rx, ry, 0, 0, Math.PI * 2 );
+		this.ctx.ellipse( this.w - 340, 160, rx, ry, 0, 0, Math.PI * 2 );
 		this.ctx.fill();
 	}
 
@@ -48,10 +44,24 @@ js13k.CatFg = class extends js13k.LevelObject {
 	draw( ctx ) {
 		if( this._needsRedraw ) {
 			this.ctx.clearRect( 0, 0, this.w, this.h );
+			this.ctx.fillStyle = '#644e1e';
+			this.ctx.fillRect( 400, 0, 40, 340 );
 			this._drawPaws();
 		}
 
-		ctx.drawImage( this.cnv, this.calcCenterX(), js13k.h - this.level.cauldron.h );
+		let x = this.calcCenterX() + Math.sin( this.timer ) * 200 - 20;
+		let y = js13k.h - this.level.cauldron.h - 80 + Math.cos( this.timer ) * 30;
+
+		const centerX = x + this.w / 2 + 20;
+		const centerY = y + this.h / 2 - 170;
+
+		ctx.translate( centerX, centerY );
+		ctx.rotate( Math.sin( this.timer ) * 10 * Math.PI / 180 );
+		ctx.translate( -centerX, -centerY );
+
+		ctx.drawImage( this.cnv, x, y );
+
+		ctx.setTransform( js13k.Renderer.scale, 0, 0, js13k.Renderer.scale, 0, 0 ); // reset
 	}
 
 
@@ -60,7 +70,7 @@ js13k.CatFg = class extends js13k.LevelObject {
 	 * @param {number} timer
 	 */
 	update( timer ) {
-		this.animation?.do();
+		this.timer = timer / 40;
 	}
 
 
