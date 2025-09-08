@@ -4,9 +4,6 @@
 js13k.CatBg = class extends js13k.LevelObject {
 
 
-	static STATE_IDLE = 1;
-
-
 	/**
 	 *
 	 * @param {js13k.Level} level
@@ -15,7 +12,6 @@ js13k.CatBg = class extends js13k.LevelObject {
 		super( level, 800, 800 );
 
 		this.offsetY = 0;
-		this.state = js13k.CatBg.STATE_IDLE;
 
 		// TODO: remove
 		/** @type {HTMLCanvasElement} */
@@ -48,19 +44,41 @@ js13k.CatBg = class extends js13k.LevelObject {
 		let h = 100;
 
 		this.ctx.fillStyle = '#000';
+		this.ctx.strokeStyle = '#000';
+
+		// Left ear
+		this.ctx.beginPath();
+		this.ctx.moveTo( x, y );
+		this.ctx.lineTo( x + 10, y - h );
+		this.ctx.lineTo( x + w, y );
+		this.ctx.closePath();
+		this.ctx.fill();
+		this.ctx.stroke();
+
+		// Right ear
+		this.ctx.beginPath();
+		this.ctx.moveTo( this.w - x, y );
+		this.ctx.lineTo( this.w - x - 10, y - h );
+		this.ctx.lineTo( this.w - x - w, y );
+		this.ctx.closePath();
+		this.ctx.fill();
+		this.ctx.stroke();
+
+		this.ctx.fillStyle = '#111';
+		x += 15;
+		h -= 45;
+		w -= 35;
 
 		this.ctx.beginPath();
 		this.ctx.moveTo( x, y );
-		this.ctx.lineTo( x, y - h );
+		this.ctx.lineTo( x + 5, y - h );
 		this.ctx.lineTo( x + w, y );
-		this.ctx.closePath();
 		this.ctx.fill();
 
 		this.ctx.beginPath();
 		this.ctx.moveTo( this.w - x, y );
+		this.ctx.lineTo( this.w - x - 5, y - h );
 		this.ctx.lineTo( this.w - x - w, y );
-		this.ctx.lineTo( this.w - x, y - h );
-		this.ctx.closePath();
 		this.ctx.fill();
 	}
 
@@ -159,6 +177,7 @@ js13k.CatBg = class extends js13k.LevelObject {
 
 		this.ctx.fill();
 
+		// Hat band
 		this.ctx.fillStyle = '#54245f';
 		this.ctx.beginPath();
 		this.ctx.moveTo( 240, y + 30 );
@@ -200,10 +219,16 @@ js13k.CatBg = class extends js13k.LevelObject {
 			this.ctx.clearRect( 0, 0, this.w, this.h );
 
 			const bodyW = this.w * 0.4;
+			const bodyX = this._centerX( bodyW );
 
 			// Body
 			this.ctx.fillStyle = '#000';
-			this.ctx.fillRect( this._centerX( bodyW ), 250, bodyW, this.h - 250 );
+			this.ctx.beginPath();
+			this.ctx.fillRect( bodyX, 250, bodyW, this.h - 250 );
+			this.ctx.ellipse( bodyX, this.h - 420, 150, 15, 90 * Math.PI / 180, 0, Math.PI );
+			this.ctx.ellipse( bodyX + bodyW, this.h - 420, 150, 15, 270 * Math.PI / 180, 0, Math.PI );
+			this.ctx.closePath();
+			this.ctx.fill();
 
 			this._drawFace( bodyW );
 			this._drawHat();
@@ -224,12 +249,8 @@ js13k.CatBg = class extends js13k.LevelObject {
 	 * @param {number} timer
 	 */
 	update( timer ) {
-		if( this.state == js13k.CatBg.STATE_IDLE ) {
-			timer *= 0.05;
-			this.offsetY = Math.sin( timer ) * 4;
-		}
-
-		this.animation?.do();
+		timer *= 0.05;
+		this.offsetY = Math.sin( timer ) * 4;
 	}
 
 

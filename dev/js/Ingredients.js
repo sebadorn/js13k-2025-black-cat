@@ -21,8 +21,13 @@ js13k.IngredientWarm = {
 		if( !this.cnv ) {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
+			// Cork
+			this.ctx.fillStyle = '#61401a';
+			this.ctx.fillRect( 42, 0, this.w - 84, 52 );
+
 			// Bottle glas
 			this.ctx.lineWidth = 4;
+			this.ctx.fillStyle = '#ffffff2f';
 			this.ctx.strokeStyle = '#fff';
 			this.ctx.beginPath();
 			this.ctx.moveTo( 2, 42 );
@@ -35,10 +40,7 @@ js13k.IngredientWarm = {
 			this.ctx.lineTo( 40, 42 );
 			this.ctx.closePath();
 			this.ctx.stroke();
-
-			// Cork
-			this.ctx.fillStyle = '#61401a';
-			this.ctx.fillRect( 42, 0, this.w - 84, 52 );
+			this.ctx.fill();
 
 			// Content
 			const points = [
@@ -75,7 +77,7 @@ js13k.IngredientWarm = {
 		ctx.drawImage( this.cnv, this.x, this.y );
 
 		if( this.mouseover ) {
-			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 15 );
+			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 35 );
 		}
 	},
 
@@ -119,7 +121,7 @@ js13k.IngredientCold = {
 		ctx.drawImage( this.cnv, this.x, this.y );
 
 		if( this.mouseover ) {
-			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 15 );
+			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 35 );
 		}
 	},
 
@@ -267,9 +269,9 @@ js13k.IngredientEmotion = {
 		if( !this.cnv ) {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
-			this._drawMushroom( 0, 75, 25, 0.45 );
-			this._drawMushroom( 30, 130, 45, 0.5 );
-			this._drawMushroom( 100, 80, 30, 0.6 );
+			this._drawMushroom( 0, 75, 25, 0.4 );
+			this._drawMushroom( 30, 130, 45, 0.6 );
+			this._drawMushroom( 100, 80, 30, 0.7 );
 			this._drawMushroom( 60, 40, 20, 0.75 );
 			this._drawMushroom( 225, 30, 25, 0.65 );
 			this._drawMushroom( 350, 20, 25, 0.65 );

@@ -130,7 +130,7 @@ js13k.Button = class {
 			text = 'Start Over';
 		}
 
-		ctx.globalAlpha = ( this.id == js13k.Button.INTRO || this.mouseover ) ? 1 : 0.4;
+		ctx.globalAlpha = ( this.id == js13k.Button.INTRO || this.mouseover ) ? 1 : 0.6;
 		ctx.drawImage( this.cnv, this.x, this.y );
 		ctx.globalAlpha = 1;
 
@@ -158,7 +158,7 @@ js13k.Level = class {
 		// 1: Starting with simple potions
 		// 2: More ingredients, potions with more ingredients
 		// 3: Again more ingredients and potions with more ingredients
-		this.stage = 0;
+		this.stage = -1;
 
 		/** @type {PotionOrder[]} */
 		this.orders = [];
@@ -182,6 +182,8 @@ js13k.Level = class {
 		this.catBg = new js13k.CatBg( this );
 		this.catFg = new js13k.CatFg( this );
 		this.cauldron = new js13k.Cauldron( this );
+
+		this.changeStage( 0 );
 	}
 
 
@@ -430,12 +432,14 @@ js13k.Level = class {
 		}
 
 		this.stage = newStage;
-		this.ingredients = [];
+
+		this.ingredients = [
+			js13k.IngredientWarm,
+			js13k.IngredientCold,
+		];
 
 		if( newStage >= 1 ) {
 			this.ingredients.push(
-				js13k.IngredientWarm,
-				js13k.IngredientCold,
 				js13k.IngredientLife, // TODO: remove
 				js13k.IngredientEmotion, // TODO: remove
 			);
@@ -453,8 +457,10 @@ js13k.Level = class {
 			);
 		}
 
-		this.orders = this._generateOrders( newStage );
-		this.nextOrder();
+		if( newStage > 0 ) {
+			this.orders = this._generateOrders( newStage );
+			this.nextOrder();
+		}
 	}
 
 
