@@ -14,7 +14,6 @@ const js13k = {
 	FONT_SERIF: '"Times New Roman", serif',
 	TARGET_FPS: 60,
 	TITLE: 'js13k 2025: Black Cat',
-	IMAGE_SMOOTHING: true,
 
 
 	/**

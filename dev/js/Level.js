@@ -416,6 +416,7 @@ js13k.Level = class {
 	 */
 	_selectIngredient( ingredient ) {
 		this.cauldron.addContent( ingredient );
+		// js13k.Audio.play( js13k.Audio.drop, 0.3 );
 	}
 
 

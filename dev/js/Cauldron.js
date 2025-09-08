@@ -35,14 +35,13 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		const state = ( ( this.level.timer + timeOffset ) / 25 ) % 4;
 
 		this.ctx.lineWidth = 3;
-		this.ctx.lineCap = 'round';
 		this.ctx.strokeStyle = '#ffffff4f';
 		this.ctx.beginPath();
 
 		if( state < 3 ) {
 			const progress = state / 3;
 			this.ctx.lineWidth *= progress;
-			this.ctx.arc( x, y, progress * progress * 10, Math.PI, 0 );
+			this.ctx.arc( x, y, progress * progress * 12, Math.PI, 0 );
 		}
 		else {
 			const alpha = 1 - state + 3;
@@ -154,6 +153,10 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		this._drawBubble( x + 180, y + 40, 75 );
 
 		ctx.drawImage( this.cnv, this.calcCenterX(), js13k.h - this.h + 100 );
+
+		if( Math.random() < 0.01 ) {
+			js13k.Audio.play( js13k.Audio.bubble, Math.random() * 0.3 );
+		}
 	}
 
 

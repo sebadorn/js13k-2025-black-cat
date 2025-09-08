@@ -94,7 +94,8 @@ js13k.Renderer = {
 		canvas.height = h;
 
 		const ctx = canvas.getContext( '2d', { alpha: true } );
-		ctx.imageSmoothingEnabled = js13k.IMAGE_SMOOTHING;
+		ctx.lineCap = 'round';
+		ctx.lineJoin = 'round';
 
 		return [canvas, ctx];
 	},
@@ -138,8 +139,6 @@ js13k.Renderer = {
 
 			// Target speed of 60 FPS (=> 1000 / 60 ~= 16.667 [ms]).
 			const dt = timeElapsed / ( 1000 / js13k.TARGET_FPS );
-
-			this.ctx.imageSmoothingEnabled = js13k.IMAGE_SMOOTHING;
 
 			if( this.isPaused ) {
 				this.drawPause();

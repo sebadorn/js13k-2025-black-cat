@@ -10,23 +10,32 @@ js13k.Audio = {
 	/**
 	 *
 	 * @param {Uint8Array} audioData
-	 * @param {object}     options
-	 * @param {number?}    options.volume
+	 * @param {number?}    volume
 	 */
-	async play( audioData, options ) {
-		const buffer = await this.context.decodeAudioData( audioData.buffer.slice() );
+	async play( audioData, volume ) {
+		if( audioData instanceof Uint8Array ) {
+			const buffer = await this.context.decodeAudioData( audioData.buffer.slice() );
 
-		const gainNode = this.context.createGain();
-		gainNode.connect( this.context.destination );
-		gainNode.gain.value = options?.volume || 0.5;
+			const gainNode = this.context.createGain();
+			gainNode.connect( this.context.destination );
+			gainNode.gain.value = volume || 0.5;
 
-		const source = this.context.createBufferSource();
-		source.buffer = buffer;
-		source.connect( gainNode );
-		source.loop = false;
-		source.start();
+			const source = this.context.createBufferSource();
+			source.buffer = buffer;
+			source.connect( gainNode );
+			source.loop = false;
+			source.start();
+		}
+		else {
+			audioData[0] = volume || audioData[0];
+			zzfx( ...audioData );
+		}
 	},
 
+
+	bubble: [1,0,92,.02,,.05,,,,,-80,-0.01,.01,-0.1,,,,.6,.03,.05,-1188],
+	drop: [1,0,414,.02,.03,.08,,1.3,,160,,,,.4,,,,.67,,,279],
+	// purr: [1,0,15,,.42,.11,,.1,,,,,,.2,,,.17,.67,,.01,-1321],
 
 	// Source: https://freesound.org/people/AlexMurphy53/sounds/330429/
 	// License: https://creativecommons.org/licenses/by-nc/4.0/
