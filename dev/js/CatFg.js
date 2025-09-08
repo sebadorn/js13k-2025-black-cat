@@ -49,28 +49,20 @@ js13k.CatFg = class extends js13k.LevelObject {
 			this._drawPaws();
 		}
 
-		let x = this.calcCenterX() + Math.sin( this.timer ) * 200 - 20;
-		let y = js13k.h - this.level.cauldron.h - 80 + Math.cos( this.timer ) * 30;
+		let timer = this.level.timer / 40;
+		let x = this.calcCenterX() + Math.sin( timer ) * 200 - 20;
+		let y = js13k.h - this.level.cauldron.h - 80 + Math.cos( timer ) * 30;
 
 		const centerX = x + this.w / 2 + 20;
 		const centerY = y + this.h / 2 - 170;
 
 		ctx.translate( centerX, centerY );
-		ctx.rotate( Math.sin( this.timer ) * 10 * Math.PI / 180 );
+		ctx.rotate( Math.sin( timer ) * 10 * Math.PI / 180 );
 		ctx.translate( -centerX, -centerY );
 
 		ctx.drawImage( this.cnv, x, y );
 
 		ctx.setTransform( js13k.Renderer.scale, 0, 0, js13k.Renderer.scale, 0, 0 ); // reset
-	}
-
-
-	/**
-	 *
-	 * @param {number} timer
-	 */
-	update( timer ) {
-		this.timer = timer / 40;
 	}
 
 

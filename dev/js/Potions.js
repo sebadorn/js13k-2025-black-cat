@@ -25,7 +25,7 @@ js13k.Potion = {
 		ingredients: [js13k.IngredientWarm],
 
 		desc: [
-			'The wind is so cold. I need something to warm me up.',
+			'Something to warm me up.',
 		],
 
 	},
@@ -87,7 +87,7 @@ js13k.Potion = {
 		],
 
 		desc: [
-			'I just finished my workout. Got some energizer?',
+			'Just finished workout. Got an energizer?',
 		],
 
 	},

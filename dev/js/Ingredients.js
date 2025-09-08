@@ -4,7 +4,7 @@
 js13k.IngredientWarm = {
 
 
-	name: 'Wild Berries',
+	name: 'Fire Berries',
 	fluidColor: '#a81646',
 
 	x: 320,
@@ -86,7 +86,7 @@ js13k.IngredientWarm = {
 js13k.IngredientCold = {
 
 
-	name: 'Sparkling Salt',
+	name: 'Shaved Ice',
 	fluidColor: '#649fa3',
 
 	x: 100,
@@ -133,10 +133,10 @@ js13k.IngredientLife = {
 	name: 'Dried Herbs',
 	fluidColor: '#074',
 
-	x: 140,
+	x: 0,
 	y: 0,
-	w: 500,
-	h: 240,
+	w: 700,
+	h: 280,
 
 
 	/**
@@ -144,6 +144,7 @@ js13k.IngredientLife = {
 	 * @private
 	 * @param {CanvasRenderingContext2D} ctx
 	 * @param {number} x
+	 * @param {number} y
 	 * @param {number} h
 	 */
 	_drawLeaf( ctx, x, y, h ) {
@@ -196,12 +197,15 @@ js13k.IngredientLife = {
 		if( !this.cnv ) {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
-			const step = this.w / 6;
+			const step = this.w / 10;
 
-			for( let i = 1; i < 7; i++ ) {
-				const h = this.h * ( i % 2 ? 1 : 0.8 );
+			for( let i = 1; i < 11; i++ ) {
+				const x = step * i - 40;
+				const y = i % 2 ? -5 : -15;
+				const h = this.h * ( i % 2 ? 1 : 0.8 ) - 80 + i * 5;
+
 				this.ctx.filter = `brightness(${0.8 + i * 0.05})`;
-				this._drawLeaf( this.ctx, step * i - 40, i % 2 ? -5 : -15, h - 30 );
+				this._drawLeaf( this.ctx, x, y, h );
 			}
 		}
 
@@ -219,18 +223,16 @@ js13k.IngredientLife = {
 js13k.IngredientEmotion = {
 
 
-	name: 'Curious Mushrooms',
+	name: 'Mindshrooms',
 	fluidColor: '#8143a5',
 
-	get x() {
-		return js13k.w - this.w - 110;
-	},
+	x: 0,
 
 	get y() {
 		return js13k.h - this.h;
 	},
 
-	w: 440,
+	w: 530,
 	h: 200,
 
 
@@ -265,105 +267,25 @@ js13k.IngredientEmotion = {
 		if( !this.cnv ) {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
-			this._drawMushroom( 135, 30, 25, 0.65 );
-			this._drawMushroom( 260, 20, 25, 0.65 );
-			this._drawMushroom( 60, 85, 30, 0.85 );
-			this._drawMushroom( 190, 70, 50, 0.9 );
-			this._drawMushroom( 320, 80, 30, 0.95 );
-			this._drawMushroom( 30, 40, 10, 1 );
-			this._drawMushroom( 110, 45, 20, 1 );
-			this._drawMushroom( 230, 35, 20, 1.1 );
-			this._drawMushroom( 360, 25, 15, 1 );
+			this._drawMushroom( 0, 75, 25, 0.45 );
+			this._drawMushroom( 30, 130, 45, 0.5 );
+			this._drawMushroom( 100, 80, 30, 0.6 );
+			this._drawMushroom( 60, 40, 20, 0.75 );
+			this._drawMushroom( 225, 30, 25, 0.65 );
+			this._drawMushroom( 350, 20, 25, 0.65 );
+			this._drawMushroom( 150, 95, 30, 0.85 );
+			this._drawMushroom( 280, 70, 50, 0.9 );
+			this._drawMushroom( 410, 80, 30, 0.95 );
+			this._drawMushroom( 110, 30, 10, 1 );
+			this._drawMushroom( 200, 45, 20, 1 );
+			this._drawMushroom( 320, 35, 20, 1.1 );
+			this._drawMushroom( 450, 25, 15, 1 );
 		}
 
 		ctx.drawImage( this.cnv, this.x, this.y );
 
 		if( this.mouseover ) {
 			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y );
-		}
-	},
-
-
-};
-
-
-js13k.IngredientSupercharge = {
-
-
-	name: 'Feather of this Strange Bird',
-	fluidColor: '#e4d944',
-
-	x: 180,
-
-	get y() {
-		return js13k.h - this.h;
-	},
-
-	w: 220,
-	h: 220,
-
-
-	/**
-	 *
-	 * @param {CanvasRenderingContext2D} ctx
-	 */
-	draw( ctx ) {
-		if( !this.cnv ) {
-			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
-
-			this.ctx.strokeStyle = '#61391f';
-			this.ctx.lineWidth = 8;
-
-			// Wooden stand
-			this.ctx.beginPath();
-			this.ctx.moveTo( this.w / 2 + 4, this.h - 100 );
-			this.ctx.lineTo( this.w / 2 + 4, this.h );
-			this.ctx.moveTo( 68, this.h - 100 );
-			this.ctx.lineTo( this.w - 60, this.h - 100 );
-			this.ctx.stroke();
-
-			// Feet
-			this.ctx.fillStyle = '#cf7c2f';
-			this.ctx.fillRect( 85, this.h - 120, 6, 26 );
-			this.ctx.fillRect( this.w - 85, this.h - 120, 6, 26 );
-
-			// Body
-			this.ctx.fillStyle = '#e4d944';
-			this.ctx.beginPath();
-			this.ctx.ellipse( this.w / 2 + 4, this.h - 160, 60, 50, 0, 0, Math.PI * 2 );
-			this.ctx.fill();
-
-			// Wings
-			this.ctx.beginPath();
-			this.ctx.moveTo( 54, this.h - 160 );
-			this.ctx.lineTo( 54, this.h - 120 );
-			this.ctx.lineTo( 114, this.h - 160 );
-			this.ctx.fill();
-			this.ctx.beginPath();
-			this.ctx.moveTo( this.w - 46, this.h - 160 );
-			this.ctx.lineTo( this.w - 46, this.h - 120 );
-			this.ctx.lineTo( this.w - 106, this.h - 160 );
-			this.ctx.fill();
-
-			// Beak
-			this.ctx.fillStyle = '#cf7c2f';
-			this.ctx.beginPath();
-			this.ctx.moveTo( this.w / 2 - 1, this.h - 165 );
-			this.ctx.lineTo( this.w / 2 + 9, this.h - 165 );
-			this.ctx.lineTo( this.w / 2 + 4, this.h - 150 );
-			this.ctx.closePath();
-			this.ctx.fill();
-
-			// Eyes
-			this.ctx.fillStyle = '#000';
-			this.ctx.fillRect( 75, this.h - 170, 12, 3 );
-			this.ctx.fillRect( this.w - 80, this.h - 170, 12, 3 );
-		}
-
-		ctx.drawImage( this.cnv, this.x, this.y );
-
-		if( this.mouseover ) {
-			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y - 40 );
 		}
 	},
 

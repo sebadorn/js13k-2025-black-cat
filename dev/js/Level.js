@@ -204,7 +204,7 @@ js13k.Level = class {
 	_drawIngredients( ctx ) {
 		// Shelves
 		ctx.fillStyle = '#683f24';
-		ctx.fillRect( 60, 580, 440, 25 );
+		ctx.fillRect( 80, 580, 420, 25 );
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
@@ -254,28 +254,36 @@ js13k.Level = class {
 		const w = 350;
 		const h = 120;
 		const x = js13k.w - w - 40;
-		const y = 40;
+		const y = 200;
 
 		const potion = this.currentOrder.potion;
 
 		// Background
-		ctx.fillStyle = '#fff';
-		ctx.fillRect( x, y, w, h );
+		ctx.fillStyle = '#000';
+		ctx.strokeStyle = '#ff0';
+		ctx.lineWidth = 2;
+		ctx.beginPath();
+		ctx.roundRect( x, y, w, h, 4 );
+		ctx.fill();
+		ctx.stroke();
 
 		// Time left
 		const timeProgress = this.currentOrder.timer.progress();
-		ctx.fillStyle = '#777';
-		ctx.fillRect( x, y, w * ( 1 - timeProgress ), 10 );
+		ctx.fillStyle = '#ff0';
+		ctx.beginPath();
+		ctx.roundRect( x, y, w * ( 1 - timeProgress ), 20, [4, 0, 0] );
+		ctx.fill();
 
 		// Name
-		ctx.fillStyle = '#000';
+		ctx.fillStyle = '#fff';
 		ctx.textAlign = 'left';
-		ctx.font = '500 16px ' + js13k.FONT_SANS;
-		ctx.fillText( this.currentOrder.desc, x + 20, y + 20 );
+		ctx.font = 'italic 600 24px ' + js13k.FONT_SERIF;
+		ctx.fillText( this.currentOrder.desc, x + 20, y + 40 );
 
 		// Info
 		if( potion.ingredients.length > 0 ) {
-			ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 50 );
+			ctx.font = '500 20px ' + js13k.FONT_SANS;
+			ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 80 );
 		}
 	}
 
@@ -290,16 +298,30 @@ js13k.Level = class {
 		ctx.strokeStyle = '#ff0';
 		ctx.lineWidth = 6;
 
-		ctx.textAlign = 'center';
-		ctx.textBaseline = 'top';
-		ctx.font = '600 48px ' + js13k.FONT_SANS;
-		ctx.fillText( this.score, js13k.w / 2, 40 );
+		let score = String( Math.abs( this.score ) * 10 ).padStart( 6, '0' );
 
-		ctx.beginPath();
-		ctx.arc( js13k.w / 2, 60, 36, 0, Math.PI * 2 );
-		ctx.stroke();
-		ctx.fillStyle = '#ffff004f';
-		ctx.fill();
+		if( this.score < 0 ) {
+			score = '-' + score;
+		}
+
+		ctx.textAlign = 'right';
+		ctx.textBaseline = 'top';
+		ctx.font = '600 48px ' + js13k.FONT_MONO;
+		ctx.fillText( score, js13k.w - 40, 40 );
+
+		// const totalOrders = this.doneOrders.length + this.failedOrders.length;
+
+		// if( totalOrders > 0 ) {
+		// 	const width = 360;
+		// 	const x = js13k.w - width - 40;
+		// 	const pcGood = this.doneOrders.length / totalOrders;
+		// 	const pcFail = 1 - pcGood;
+
+		// 	ctx.fillStyle = '#0b0';
+		// 	ctx.fillRect( x, 100, pcGood * width, 30 );
+		// 	ctx.fillStyle = '#d00';
+		// 	ctx.fillRect( x + pcGood * width, 100, pcFail * width, 30 );
+		// }
 	}
 
 
@@ -413,21 +435,20 @@ js13k.Level = class {
 			this.ingredients.push(
 				js13k.IngredientWarm,
 				js13k.IngredientCold,
-				js13k.IngredientLife,
+				js13k.IngredientLife, // TODO: remove
 				js13k.IngredientEmotion, // TODO: remove
-				js13k.IngredientSupercharge, // TODO: remove
 			);
 		}
 
 		if( newStage >= 2 ) {
 			this.ingredients.push(
-				js13k.IngredientEmotion,
+				js13k.IngredientLife,
 			);
 		}
 
 		if( newStage >= 3 ) {
 			this.ingredients.push(
-				js13k.IngredientSupercharge,
+				js13k.IngredientEmotion,
 			);
 		}
 
@@ -691,7 +712,7 @@ js13k.Level = class {
 		if( result > 0 ) {
 			this.doneOrders.push( this.currentOrder );
 		}
-		else {
+		else if( result < 0 ) {
 			this.failedOrders.push( this.currentOrder );
 		}
 
