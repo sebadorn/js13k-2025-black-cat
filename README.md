@@ -1,4 +1,4 @@
-# js13k 2025
+# js13k 2025: Black Cat Potions
 
 ![Screenshot from the game.](cover_800x500.png?raw=true)
 
@@ -8,7 +8,10 @@ Theme: **Black Cat**
 
 ## Description
 
-...
+The *Black Cat Potions* store just opened.  
+Figure out how to brew potions to fulfill the incoming orders.  
+Do well and you unlock new ingredients resulting in new kinds of orders.  
+But don't make too many mistakes or you can close your store.
 
 
 ## Controls
