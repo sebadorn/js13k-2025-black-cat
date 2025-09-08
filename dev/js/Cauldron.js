@@ -17,11 +17,10 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		/** @type {CanvasRenderingContext2D} */
 		this.ctx;
 
-		/** @type {string} */
-		this.fluidColor = '#2d7feb';
-
-		/** @type {js13k.Ingredient[]} */
+		/** @type {Ingredient[]} */
 		this.contents = [];
+
+		[this.cnvFluid, this.ctxFluid] = js13k.Renderer.getOffscreenCanvas( this.w * 0.72, this.h * 0.28 );
 	}
 
 
@@ -30,24 +29,63 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	 * @private
 	 * @param {number} x
 	 * @param {number} y
+	 * @param {number} timeOffset
 	 */
-	_drawFluid( x, y ) {
-		y += this.h * 0.08;
+	_drawBubble( x, y, timeOffset ) {
+		const state = ( ( this.level.timer + timeOffset ) / 25 ) % 4;
+
+		this.ctx.lineWidth = 3;
+		this.ctx.lineCap = 'round';
+		this.ctx.strokeStyle = '#ffffff4f';
+		this.ctx.beginPath();
+
+		if( state < 3 ) {
+			const progress = state / 3;
+			this.ctx.lineWidth *= progress;
+			this.ctx.arc( x, y, progress * progress * 10, Math.PI, 0 );
+		}
+		else {
+			const alpha = 1 - state + 3;
+			this.ctx.globalAlpha = alpha * alpha * alpha;
+			this.ctx.moveTo( x, y - 8 );
+			this.ctx.lineTo( x, y - 18 );
+			this.ctx.moveTo( x - 7, y - 6 );
+			this.ctx.lineTo( x - 15, y - 13 );
+			this.ctx.moveTo( x + 7, y - 6 );
+			this.ctx.lineTo( x + 15, y - 13 );
+		}
+
+		this.ctx.stroke();
+		this.ctx.globalAlpha = 1;
+	}
+
+
+	/**
+	 *
+	 * @private
+	 */
+	_updateFluid() {
+		const w = this.cnvFluid.width;
+		const h = this.cnvFluid.height;
+
+		const rx = w / 2;
+		const ry = h / 2;
+
+		this.ctxFluid.clearRect( 0, 0, w, h );
 
 		// Just water
-		this.fluidColor = '#2d7feb';
+		let fluidColor = '#2d7feb';
 
-		if( this.contents.length == 1 ) {
-			this.fluidColor = this.contents[0].fluidColor;
-		}
-		else if( this.contents.length == 2 ) {
-			// TODO:
+		const numIngs = this.contents.length;
+
+		if( numIngs > 0 ) {
+			fluidColor = this.contents[numIngs - 1].fluidColor;
 		}
 
-		this.ctx.fillStyle = this.fluidColor;
-		this.ctx.beginPath();
-		this.ctx.ellipse( x, y, this.w * 0.36, this.h * 0.14, 0, 0, Math.PI * 2 );
-		this.ctx.fill();
+		this.ctxFluid.fillStyle = fluidColor;
+		this.ctxFluid.beginPath();
+		this.ctxFluid.ellipse( w / 2, h / 2, rx, ry, 0, 0, Math.PI * 2 );
+		this.ctxFluid.fill();
 	}
 
 
@@ -66,50 +104,54 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
-		if( this._needsRedraw ) {
-			this.ctx.clearRect( 0, 0, this.w, this.h );
+		this.ctx.clearRect( 0, 0, this.w, this.h );
 
-			this._needsRedraw = false;
+		const x = this.w / 2;
+		const y = this.h * 0.2 + 2;
+		const same = [0, 0, Math.PI * 2];
 
-			let x = this.w / 2;
-			let y = this.h * 0.2 + 2;
-			let same = [0, 0, Math.PI * 2];
+		const gradient = this.ctx.createRadialGradient(
+			x, y + this.h * 0.37, this.h * 0.14,
+			x, y + this.h * 0.37, this.h * 0.82
+		);
+		gradient.addColorStop( 0, '#666' );
+		gradient.addColorStop( 1, '#444' );
 
-			const gradient = this.ctx.createRadialGradient(
-				x, y + this.h * 0.37, this.h * 0.14,
-				x, y + this.h * 0.37, this.h * 0.82
-			);
-			gradient.addColorStop( 0, '#777' );
-			gradient.addColorStop( 1, '#555' );
+		this.ctx.strokeStyle = '#444';
+		this.ctx.lineWidth = 4;
 
-			this.ctx.strokeStyle = '#555';
-			this.ctx.lineWidth = 4;
+		// big bottom
+		this.ctx.fillStyle = gradient;
+		this.ctx.beginPath();
+		this.ctx.ellipse( x, y + this.h * 0.33, this.w * 0.5, this.h * 0.47, ...same );
+		this.ctx.fill();
 
-			// big bottom
-			this.ctx.fillStyle = gradient;
-			this.ctx.beginPath();
-			this.ctx.ellipse( x, y + this.h * 0.33, this.w * 0.5, this.h * 0.47, ...same );
-			this.ctx.fill();
+		// upper rim
+		this.ctx.beginPath();
+		this.ctx.ellipse( x, y, this.w * 0.45, this.h * 0.2, ...same );
+		this.ctx.fill();
+		this.ctx.stroke();
 
-			// upper rim
-			this.ctx.beginPath();
-			this.ctx.ellipse( x, y, this.w * 0.45, this.h * 0.2, ...same );
-			this.ctx.fill();
-			this.ctx.stroke();
+		// inner area
+		this.ctx.fillStyle = '#444';
+		this.ctx.beginPath();
+		this.ctx.ellipse( x, y - this.h * 0.01, this.w * 0.39, this.h * 0.15, ...same );
+		this.ctx.fill();
 
-			// inner area
-			this.ctx.fillStyle = '#555';
-			this.ctx.beginPath();
-			this.ctx.ellipse( x, y - this.h * 0.01, this.w * 0.39, this.h * 0.15, ...same );
-			this.ctx.fill();
+		// fluid
+		this._updateFluid();
+		this.ctx.save();
+		this.ctx.clip();
+		this.ctx.drawImage( this.cnvFluid, x / 2 - 90, y - this.h * 0.06 );
+		this.ctx.restore();
 
-			this.ctx.save();
-			this.ctx.clip();
-			this._drawFluid( x, y );
-			this.ctx.restore();
-
-			js13k.Renderer.pixelate( this.cnv, this.ctx );
-		}
+		// bubbles
+		this._drawBubble( x - 180, y + 25, 75 );
+		this._drawBubble( x - 100, y + 50, 50 );
+		this._drawBubble( x - 30, y + 10, 0 );
+		this._drawBubble( x + 30, y + 60, 25 );
+		this._drawBubble( x + 100, y + 20, 50 );
+		this._drawBubble( x + 180, y + 40, 75 );
 
 		ctx.drawImage( this.cnv, this.calcCenterX(), js13k.h - this.h + 100 );
 	}
