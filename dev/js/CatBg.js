@@ -172,6 +172,27 @@ js13k.CatBg = class extends js13k.LevelObject {
 
 	/**
 	 *
+	 * @private
+	 */
+	_drawTail() {
+		this.ctx.strokeStyle = '#000';
+		this.ctx.lineWidth = 40;
+		this.ctx.beginPath();
+
+		const startX = this.w / 2;
+		const startY = this.h;
+		this.ctx.moveTo( startX, startY );
+
+		const endX = this.w - 20;
+		const endY = this.h / 2 + 60;
+		this.ctx.bezierCurveTo( startX + 300, startY, endX - 200, endY, endX, endY );
+
+		this.ctx.stroke();
+	}
+
+
+	/**
+	 *
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
@@ -187,6 +208,7 @@ js13k.CatBg = class extends js13k.LevelObject {
 			this._drawFace( bodyW );
 			this._drawHat();
 			this._drawEars( bodyW );
+			this._drawTail();
 		}
 
 		ctx.drawImage(
