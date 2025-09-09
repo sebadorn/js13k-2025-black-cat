@@ -41,6 +41,11 @@ js13k.Button = class {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
 			if( this.id == js13k.Button.INTRO ) {
+				this.ctx.fillStyle = '#ff0';
+				this.ctx.beginPath();
+				this.ctx.roundRect( 2, 2, this.w - 4, this.h - 4, 20 );
+				this.ctx.fill();
+
 				this.ctx.fillStyle = '#000';
 				this.ctx.font = '600 20px ' + js13k.FONT_SANS;
 				this.ctx.textAlign = 'center';
@@ -175,7 +180,7 @@ js13k.Level = class {
 		/** @type {Ingredient[]} */
 		this.ingredients = [];
 
-		this.btnIntroStart = new js13k.Button( js13k.Button.INTRO, 0, 400 - 60, 200, 40 );
+		this.btnIntroStart = new js13k.Button( js13k.Button.INTRO, 0, 360, 200, 40 );
 		this.btnBottle = new js13k.Button( js13k.Button.BOTTLE );
 		this.btnRestart = new js13k.Button( js13k.Button.RESTART );
 
@@ -210,7 +215,7 @@ js13k.Level = class {
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
-			ing.draw( ctx );
+			ing.draw( ctx, this.timer );
 		}
 	}
 
@@ -224,20 +229,30 @@ js13k.Level = class {
 		ctx.fillStyle = '#0000004f';
 		ctx.fillRect( 0, 0, js13k.w, js13k.h );
 
-		const w = 600;
-		const h = 200;
+		const w = 640;
+		const h = 220;
 		const x = ( js13k.w - w ) / 2;
-		ctx.fillStyle = '#fff';
-		ctx.fillRect( x, 200, w, h );
-
 		ctx.fillStyle = '#000';
-		ctx.textAlign = 'left';
-		ctx.font = '500 16px ' + js13k.FONT_SANS;
+		ctx.strokeStyle = '#ff0';
+		ctx.lineWidth = 2;
+		ctx.shadowColor = '#770';
+		ctx.shadowBlur = 100;
+		ctx.beginPath();
+		ctx.roundRect( x, 200, w, h, 4 );
+		ctx.fill();
+		ctx.stroke();
+		ctx.shadowBlur = 0;
+
+		ctx.fillStyle = '#fff';
+		ctx.textAlign = 'center';
 		ctx.textBaseline = 'top';
-		// TODO: better text UI
-		ctx.fillText( 'Welcome to the opening of Black Cat Potions!', x + 10, 210 );
-		ctx.fillText( 'Do not let your score drop below 1 or you can close your business again.', x + 10, 226 );
-		ctx.fillText( 'You have the ingredients, but alas! no recipe book.', x + 10, 242 );
+
+		ctx.font = 'italic 600 28px ' + js13k.FONT_SANS;
+		ctx.fillText( 'Welcome to Black Cat Potions!', x + w / 2, 230 );
+
+		ctx.font = '500 20px ' + js13k.FONT_SANS;
+		ctx.fillText( 'Create potions for your customers with the ingredients on the left.', x + w / 2, 280 );
+		ctx.fillText( 'Do not let your score drop below zero by making mistakes.', x + w / 2, 316 );
 
 		this.btnIntroStart.draw( ctx );
 	}
@@ -493,13 +508,19 @@ js13k.Level = class {
 	 */
 	static drawMouseoverText( ctx, text, x, y ) {
 		ctx.save();
-		ctx.shadowBlur = 30;
-		ctx.shadowColor = '#000';
+
+		const w = text.length * 18;
+		ctx.filter = 'blur(20px)';
+		ctx.fillStyle = '#000';
+		ctx.fillRect( x - w / 2, y, w, 32  );
+		ctx.filter = 'blur(0)';
+
 		ctx.fillStyle = '#fff';
 		ctx.font = 'italic 600 32px ' + js13k.FONT_SERIF;
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'top';
 		ctx.fillText( text, x, y );
+
 		ctx.restore();
 	}
 
@@ -587,6 +608,7 @@ js13k.Level = class {
 		if( this.stage == 0 ) {
 			if( this.isInside( pos, this.btnIntroStart ) ) {
 				this.changeStage( 1 );
+				setTimeout( () => js13k.Audio.play( js13k.Audio.meow ), 10 );
 			}
 			return;
 		}

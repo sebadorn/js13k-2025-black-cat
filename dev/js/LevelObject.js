@@ -53,7 +53,7 @@ js13k.Animation = class {
 
 	/**
 	 *
-	 * @param {number}   duration
+	 * @param {number}   duration - Duration in seconds.
 	 * @param {function} onUpdate
 	 * @param {function} onDone 
 	 */
