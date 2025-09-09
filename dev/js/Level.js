@@ -125,8 +125,8 @@ js13k.Button = class {
 			this.x = ( js13k.w - this.w ) / 2;
 		}
 		else if( this.id == js13k.Button.BOTTLE ) {
-			this.x = js13k.w - 200;
-			this.y = ( js13k.h - 100 ) / 2;
+			this.x = js13k.w - 380;
+			this.y = 550;
 			text = 'Finish Potion';
 		}
 		else if( this.id == js13k.Button.RESTART ) {
@@ -208,6 +208,49 @@ js13k.Level = class {
 	 * @private
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
+	_drawFog( ctx ) {
+		const w = 700;
+		const h = 320;
+
+		if( !this._cnvFog ) {
+			[this._cnvFog, this._ctxFog] = js13k.Renderer.getOffscreenCanvas( w, h );
+			this._ctxFog.fillStyle = '#ffffff0f';
+
+			const circles = [155, 120, 90, 70, 50, 40];
+			let sum = 0;
+
+			this._ctxFog.beginPath();
+
+			for( let i = 0; i < circles.length; i++ ) {
+				const r = circles[i];
+				this._ctxFog.arc( sum + r, h - r, r, 0, Math.PI * 2 );
+				this._ctxFog.closePath();
+				sum += r * 1.25;
+			}
+
+			this._ctxFog.fill();
+		}
+
+		const offsetX = Math.sin( this.timer / 60 ) * 10 - 20;
+
+		const y = js13k.h - h + 40;
+		ctx.drawImage( this._cnvFog, offsetX, y );
+		ctx.drawImage( this._cnvFog, offsetX - 215, y + 10 );
+
+		const s = js13k.Renderer.scale;
+		const x = js13k.w - w - offsetX;
+		ctx.setTransform( -s, 0, 0, s, s * ( x + w ), s * y );
+		ctx.drawImage( this._cnvFog, 0, 0 );
+		ctx.drawImage( this._cnvFog, -155, 10 );
+		ctx.setTransform( s, 0, 0, s, 0, 0 );
+	}
+
+
+	/**
+	 *
+	 * @private
+	 * @param {CanvasRenderingContext2D} ctx
+	 */
 	_drawIngredients( ctx ) {
 		// Shelves
 		ctx.fillStyle = '#683f24';
@@ -271,7 +314,7 @@ js13k.Level = class {
 		const w = 350;
 		const h = 120;
 		const x = js13k.w - w - 40;
-		const y = 200;
+		const y = 400;
 
 		const potion = this.currentOrder.potion;
 
@@ -311,34 +354,39 @@ js13k.Level = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	_drawScore( ctx ) {
-		ctx.fillStyle = '#ff0';
-		ctx.strokeStyle = '#ff0';
-		ctx.lineWidth = 6;
-
 		let score = String( Math.abs( this.score ) * 10 ).padStart( 6, '0' );
 
 		if( this.score < 0 ) {
 			score = '-' + score;
 		}
 
+		ctx.fillStyle = '#ff0';
+		ctx.strokeStyle = '#ff0';
+		ctx.lineWidth = 6;
 		ctx.textAlign = 'right';
 		ctx.textBaseline = 'top';
 		ctx.font = '600 48px ' + js13k.FONT_MONO;
 		ctx.fillText( score, js13k.w - 40, 40 );
 
-		// const totalOrders = this.doneOrders.length + this.failedOrders.length;
+		// Progress bar
+		const goal = 10;
+		const progress = Math.min( 1, this.doneOrders.length / goal );
+		const width = 360;
+		const x = js13k.w - width - 40;
 
-		// if( totalOrders > 0 ) {
-		// 	const width = 360;
-		// 	const x = js13k.w - width - 40;
-		// 	const pcGood = this.doneOrders.length / totalOrders;
-		// 	const pcFail = 1 - pcGood;
+		ctx.lineWidth = 3;
+		ctx.fillStyle = '#ff0';
+		ctx.beginPath();
+		ctx.roundRect( x, 100, width, 30, 4 );
+		ctx.fill();
 
-		// 	ctx.fillStyle = '#0b0';
-		// 	ctx.fillRect( x, 100, pcGood * width, 30 );
-		// 	ctx.fillStyle = '#d00';
-		// 	ctx.fillRect( x + pcGood * width, 100, pcFail * width, 30 );
-		// }
+		ctx.font = '600 18px ' + js13k.FONT_MONO;
+		ctx.fillText( this.doneOrders.length + '/' + goal, x + width, 140 );
+
+		ctx.fillStyle = '#6a267a';
+		ctx.beginPath();
+		ctx.roundRect( x + 2, 102, Math.max( 6, width * progress - 4 ), 26, 4 );
+		ctx.fill();
 	}
 
 
@@ -484,6 +532,8 @@ js13k.Level = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	draw( ctx ) {
+		this._drawFog( ctx );
+
 		this.catBg.draw( ctx );
 		this.cauldron.draw( ctx );
 		this.catFg.draw( ctx );

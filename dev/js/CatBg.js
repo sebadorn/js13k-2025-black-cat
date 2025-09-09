@@ -122,7 +122,7 @@ js13k.CatBg = class extends js13k.LevelObject {
 		let ry = 16;
 		let yMouth = y + 300;
 
-		this.ctx.strokeStyle = '#fff';
+		this.ctx.strokeStyle = '#aaa';
 		this.ctx.lineWidth = 4;
 		this.ctx.beginPath();
 		this.ctx.ellipse( x + bodyWHalf - rx, yMouth, rx, ry, 0, 0, Math.PI * 0.9 );
