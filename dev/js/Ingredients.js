@@ -134,6 +134,7 @@ js13k.IngredientCold = {
 					ctx.globalAlpha = ( progress > 0.5 ? 1 - progress : progress ) * 2;
 					ctx.strokeStyle = '#fff';
 					ctx.lineWidth = 1;
+					ctx.beginPath();
 					ctx.moveTo( x - 2, y - 2 );
 					ctx.lineTo( x + 2, y + 2 );
 					ctx.moveTo( x + 2, y - 2 );
@@ -171,6 +172,8 @@ js13k.IngredientLife = {
 	y: 0,
 	w: 700,
 	h: 280,
+
+	_animations: [],
 
 
 	/**
@@ -226,8 +229,9 @@ js13k.IngredientLife = {
 	/**
 	 *
 	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {number} timer
 	 */
-	draw( ctx ) {
+	draw( ctx, timer ) {
 		if( !this.cnv ) {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
@@ -242,6 +246,41 @@ js13k.IngredientLife = {
 				this._drawLeaf( this.ctx, x, y, h );
 			}
 		}
+
+		// Falling leaves
+		if( Math.round( timer % 120 ) == 0 ) {
+			const x = this.w / 2 + ( Math.random() * 2 - 1 ) * this.w / 2;
+			const y = this.h / 3;
+
+			const anim = new js13k.Animation(
+				10,
+				progress => {
+					const move = Math.sin( progress * 10 );
+
+					ctx.globalAlpha = 1 - progress;
+					ctx.fillStyle = '#adb639';
+					ctx.lineWidth = 1;
+					ctx.beginPath();
+					ctx.ellipse(
+						x + move * 10,
+						y + progress * 300,
+						5, 7,
+						( 90 + move * -15 ) * Math.PI / 180,
+						0, Math.PI * 2
+					);
+					ctx.fill();
+					ctx.globalAlpha = 1;
+				},
+				() => {
+					const index = this._animations.indexOf( anim );
+					this._animations.splice( index, 1 );
+				},
+			);
+
+			this._animations.push( anim );
+		}
+
+		this._animations.forEach( anim => anim.do() );
 
 		ctx.drawImage( this.cnv, this.x, this.y );
 

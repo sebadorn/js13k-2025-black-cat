@@ -33,16 +33,16 @@ js13k.LevelObject = class {
 
 	/**
 	 *
-	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {CanvasRenderingContext2D} _ctx
 	 */
-	draw( ctx ) {}
+	draw( _ctx ) {}
 
 
 	/**
 	 *
-	 * @param {number} timer
+	 * @param {number} _timer
 	 */
-	update( timer ) {}
+	update( _timer ) {}
 
 
 };
