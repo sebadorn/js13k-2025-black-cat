@@ -88,7 +88,7 @@ js13k.IngredientWarm = {
 js13k.IngredientCold = {
 
 
-	name: 'Shaved Ice',
+	name: 'Crystal Ice',
 	fluidColor: '#649fa3',
 
 	x: 100,
@@ -135,10 +135,10 @@ js13k.IngredientCold = {
 					ctx.strokeStyle = '#fff';
 					ctx.lineWidth = 1;
 					ctx.beginPath();
-					ctx.moveTo( x - 2, y - 2 );
-					ctx.lineTo( x + 2, y + 2 );
-					ctx.moveTo( x + 2, y - 2 );
-					ctx.lineTo( x - 2, y + 2 );
+					ctx.moveTo( x - 2, y );
+					ctx.lineTo( x + 2, y );
+					ctx.moveTo( x, y - 2 );
+					ctx.lineTo( x, y + 2 );
 					ctx.stroke();
 					ctx.globalAlpha = 1;
 				},
