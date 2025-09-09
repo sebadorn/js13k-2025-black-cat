@@ -157,7 +157,8 @@ js13k.Level = class {
 	 */
 	constructor() {
 		this.timer = 0;
-		this.score = 1;
+		this.goal = 10;
+		this.limit = 10;
 
 		// 0: Intro
 		// 1: Starting with simple potions
@@ -354,38 +355,46 @@ js13k.Level = class {
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
 	_drawScore( ctx ) {
-		let score = String( Math.abs( this.score ) * 10 ).padStart( 6, '0' );
-
-		if( this.score < 0 ) {
-			score = '-' + score;
-		}
-
-		ctx.fillStyle = '#ff0';
 		ctx.strokeStyle = '#ff0';
-		ctx.lineWidth = 6;
 		ctx.textAlign = 'right';
 		ctx.textBaseline = 'top';
-		ctx.font = '600 48px ' + js13k.FONT_MONO;
-		ctx.fillText( score, js13k.w - 40, 40 );
+		ctx.font = '600 18px ' + js13k.FONT_MONO;
 
-		// Progress bar
-		const goal = 10;
-		const progress = Math.min( 1, this.doneOrders.length / goal );
 		const width = 360;
 		const x = js13k.w - width - 40;
+		let y = 60;
 
-		ctx.lineWidth = 3;
+		// Progress on successful orders
+		const progressGoal = Math.min( 1, this.doneOrders.length / this.goal );
+
 		ctx.fillStyle = '#ff0';
+		ctx.lineWidth = 3;
 		ctx.beginPath();
-		ctx.roundRect( x, 100, width, 30, 4 );
+		ctx.roundRect( x, y, width, 30, 4 );
 		ctx.fill();
 
-		ctx.font = '600 18px ' + js13k.FONT_MONO;
-		ctx.fillText( this.doneOrders.length + '/' + goal, x + width, 140 );
+		ctx.fillText( this.doneOrders.length + '/' + this.goal, x + width, y + 36 );
 
 		ctx.fillStyle = '#6a267a';
 		ctx.beginPath();
-		ctx.roundRect( x + 2, 102, Math.max( 6, width * progress - 4 ), 26, 4 );
+		ctx.roundRect( x + 2, y + 2, Math.max( 6, width * progressGoal - 4 ), 26, 4 );
+		ctx.fill();
+
+		// Progress on failed orders
+		const progressLimit = Math.min( 1, this.failedOrders.length / this.limit );
+		y = 150;
+
+		ctx.fillStyle = '#ff0';
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.roundRect( x, y, width, 30, 4 );
+		ctx.fill();
+
+		ctx.fillText( this.failedOrders.length + '/' + this.limit, x + width, y + 36 );
+
+		ctx.fillStyle = '#f00';
+		ctx.beginPath();
+		ctx.roundRect( x + 2, y + 2, Math.max( 6, width * progressLimit - 4 ), 26, 4 );
 		ctx.fill();
 	}
 
@@ -767,7 +776,7 @@ js13k.Level = class {
 			this.changeStage( 3 );
 		}
 
-		if( this.score <= 0 ) {
+		if( this.failedOrders.length >= 10 ) {
 			// TODO: game over
 		}
 
@@ -785,7 +794,6 @@ js13k.Level = class {
 		const potion = this.getPotion( contents );
 		const result = this.scoreOrder( potion );
 
-		this.score += result;
 		this.currentOrder.score = result;
 
 		if( result > 0 ) {
