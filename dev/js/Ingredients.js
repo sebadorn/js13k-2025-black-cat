@@ -96,17 +96,20 @@ js13k.IngredientCold = {
 	w: 180,
 	h: 150,
 
+	_animations: [],
+
 
 	/**
 	 *
 	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {number} timer
 	 */
-	draw( ctx ) {
+	draw( ctx, timer ) {
 		if( !this.cnv ) {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
 			// Content
-			this.ctx.fillStyle = '#d3edee';
+			this.ctx.fillStyle = '#b3e7e9';
 			this.ctx.beginPath();
 			this.ctx.ellipse( this.w / 2, this.h / 2 + 20, this.w / 2 - 20, this.h / 2 - 40, 0, 0, Math.PI, true );
 			this.ctx.fill();
@@ -119,6 +122,35 @@ js13k.IngredientCold = {
 		}
 
 		ctx.drawImage( this.cnv, this.x, this.y );
+
+		// Sparkles
+		if( Math.round( timer % 40 ) == 0 ) {
+			const x = this.x + this.w / 2 + ( Math.random() * 2 - 1 ) * 60;
+			const y = this.y + this.h / 2 - 5 + ( Math.random() * 2 - 1 ) * 15;
+
+			const anim = new js13k.Animation(
+				1,
+				progress => {
+					ctx.globalAlpha = ( progress > 0.5 ? 1 - progress : progress ) * 2;
+					ctx.strokeStyle = '#fff';
+					ctx.lineWidth = 1;
+					ctx.moveTo( x - 2, y - 2 );
+					ctx.lineTo( x + 2, y + 2 );
+					ctx.moveTo( x + 2, y - 2 );
+					ctx.lineTo( x - 2, y + 2 );
+					ctx.stroke();
+					ctx.globalAlpha = 1;
+				},
+				() => {
+					const index = this._animations.indexOf( anim );
+					this._animations.splice( index, 1 );
+				},
+			);
+
+			this._animations.push( anim );
+		}
+
+		this._animations.forEach( anim => anim.do() );
 
 		if( this.mouseover ) {
 			js13k.Level.drawMouseoverText( ctx, this.name, this.x + this.w / 2, this.y + this.h + 35 );
