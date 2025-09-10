@@ -184,6 +184,8 @@ js13k.Renderer = {
 
 		js13k.Input.onKeyUp( 'Escape', () => this.togglePause() );
 
+		let timeoutMove = null;
+
 		this.cnv.addEventListener( 'mouseleave', _ev => {
 			this.cursor[0] = -1;
 		} );
@@ -192,7 +194,12 @@ js13k.Renderer = {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
 
-			this.level?.onMouseMove( this.getScaledCursor() );
+			if( !timeoutMove ) {
+				timeoutMove = setTimeout( () => {
+					this.level?.onMouseMove( this.getScaledCursor() );
+					timeoutMove = null;
+				}, 66 );
+			}
 		} );
 
 		this.cnv.addEventListener( 'click', ev => {
