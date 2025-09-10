@@ -215,9 +215,6 @@ js13k.Renderer = {
 	 * Resize the canvas.
 	 */
 	resize() {
-		// let size = Math.min( window.innerWidth, window.innerHeight );
-		// this.scale = size / 1080;
-
 		const targetRatio = 1920 / 1080;
 
 		let height = window.innerHeight;

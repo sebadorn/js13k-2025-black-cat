@@ -128,7 +128,7 @@ js13k.IngredientCold = {
 			const x = this.x + this.w / 2 + ( Math.random() * 2 - 1 ) * 60;
 			const y = this.y + this.h / 2 - 5 + ( Math.random() * 2 - 1 ) * 15;
 
-			const anim = new js13k.Animation(
+			this._animations.push( new js13k.Animation(
 				1,
 				progress => {
 					ctx.globalAlpha = ( progress > 0.5 ? 1 - progress : progress ) * 2;
@@ -142,13 +142,11 @@ js13k.IngredientCold = {
 					ctx.stroke();
 					ctx.globalAlpha = 1;
 				},
-				() => {
-					const index = this._animations.indexOf( anim );
+				thisAnimation => {
+					const index = this._animations.indexOf( thisAnimation );
 					this._animations.splice( index, 1 );
 				},
-			);
-
-			this._animations.push( anim );
+			) );
 		}
 
 		this._animations.forEach( anim => anim.do() );
@@ -252,7 +250,7 @@ js13k.IngredientLife = {
 			const x = this.w / 2 + ( Math.random() * 2 - 1 ) * this.w / 2;
 			const y = this.h / 3;
 
-			const anim = new js13k.Animation(
+			this._animations.push( new js13k.Animation(
 				10,
 				progress => {
 					const move = Math.sin( progress * 10 );
@@ -271,13 +269,11 @@ js13k.IngredientLife = {
 					ctx.fill();
 					ctx.globalAlpha = 1;
 				},
-				() => {
-					const index = this._animations.indexOf( anim );
+				thisAnimation => {
+					const index = this._animations.indexOf( thisAnimation );
 					this._animations.splice( index, 1 );
 				},
-			);
-
-			this._animations.push( anim );
+			) );
 		}
 
 		this._animations.forEach( anim => anim.do() );

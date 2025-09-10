@@ -157,8 +157,11 @@ js13k.Level = class {
 	 */
 	constructor() {
 		this.timer = 0;
-		this.goal = 10;
-		this.limit = 10;
+		this.ordersCorrectGoal = 20;
+		this.ordersWrongLimit = 10;
+
+		this.isEndlessGame = false;
+		this.isGameOver = false;
 
 		// 0: Intro
 		// 1: Starting with simple potions
@@ -181,7 +184,7 @@ js13k.Level = class {
 		/** @type {Ingredient[]} */
 		this.ingredients = [];
 
-		this.btnIntroStart = new js13k.Button( js13k.Button.INTRO, 0, 360, 200, 40 );
+		this.btnIntroStart = new js13k.Button( js13k.Button.INTRO, 0, 390, 200, 40 );
 		this.btnBottle = new js13k.Button( js13k.Button.BOTTLE );
 		this.btnRestart = new js13k.Button( js13k.Button.RESTART );
 
@@ -252,6 +255,41 @@ js13k.Level = class {
 	 * @private
 	 * @param {CanvasRenderingContext2D} ctx
 	 */
+	_drawGameOver( ctx ) {
+		ctx.fillStyle = '#0000004f';
+		ctx.fillRect( 0, 0, js13k.w, js13k.h );
+
+		const w = 600;
+		const h = 125;
+		const x = ( js13k.w - w ) / 2;
+		ctx.fillStyle = '#000';
+		ctx.strokeStyle = '#f00';
+		ctx.lineWidth = 2;
+		ctx.shadowColor = '#700';
+		ctx.shadowBlur = 100;
+		ctx.beginPath();
+		ctx.roundRect( x, 200, w, h, 4 );
+		ctx.fill();
+		ctx.stroke();
+		ctx.shadowBlur = 0;
+
+		ctx.fillStyle = '#fff';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'top';
+
+		ctx.font = '500 28px ' + js13k.FONT_SANS;
+		ctx.fillText( "Shop's closed (◞ ᆺ ◟)", x + w / 2, 230 );
+
+		ctx.font = '500 20px ' + js13k.FONT_SANS;
+		ctx.fillText( 'There were too many complaints.', x + w / 2, 280 );
+	}
+
+
+	/**
+	 *
+	 * @private
+	 * @param {CanvasRenderingContext2D} ctx
+	 */
 	_drawIngredients( ctx ) {
 		// Shelves
 		ctx.fillStyle = '#683f24';
@@ -274,7 +312,7 @@ js13k.Level = class {
 		ctx.fillRect( 0, 0, js13k.w, js13k.h );
 
 		const w = 640;
-		const h = 220;
+		const h = 256;
 		const x = ( js13k.w - w ) / 2;
 		ctx.fillStyle = '#000';
 		ctx.strokeStyle = '#ff0';
@@ -295,8 +333,9 @@ js13k.Level = class {
 		ctx.fillText( 'Welcome to Black Cat Potions!', x + w / 2, 230 );
 
 		ctx.font = '500 20px ' + js13k.FONT_SANS;
-		ctx.fillText( 'Create potions for your customers with the ingredients on the left.', x + w / 2, 280 );
-		ctx.fillText( 'Do not let your score drop below zero by making mistakes.', x + w / 2, 316 );
+		ctx.fillText( 'Figure out what your customer wants, then create a', x + w / 2, 280 );
+		ctx.fillText( 'potion for them with the ingredients on the left.', x + w / 2, 310 );
+		ctx.fillText( 'You are only allowed a certain number of mistakes total.', x + w / 2, 350 );
 
 		this.btnIntroStart.draw( ctx );
 	}
@@ -365,7 +404,7 @@ js13k.Level = class {
 		let y = 60;
 
 		// Progress on successful orders
-		const progressGoal = Math.min( 1, this.doneOrders.length / this.goal );
+		const progressGoal = Math.min( 1, this.doneOrders.length / this.ordersCorrectGoal );
 
 		ctx.fillStyle = '#ff0';
 		ctx.lineWidth = 3;
@@ -373,7 +412,7 @@ js13k.Level = class {
 		ctx.roundRect( x, y, width, 30, 4 );
 		ctx.fill();
 
-		ctx.fillText( this.doneOrders.length + '/' + this.goal, x + width, y + 36 );
+		ctx.fillText( this.doneOrders.length + '/' + this.ordersCorrectGoal, x + width, y + 36 );
 
 		ctx.fillStyle = '#6a267a';
 		ctx.beginPath();
@@ -381,7 +420,7 @@ js13k.Level = class {
 		ctx.fill();
 
 		// Progress on failed orders
-		const progressLimit = Math.min( 1, this.failedOrders.length / this.limit );
+		const progressLimit = Math.min( 1, this.failedOrders.length / this.ordersWrongLimit );
 		y = 150;
 
 		ctx.fillStyle = '#ff0';
@@ -390,7 +429,7 @@ js13k.Level = class {
 		ctx.roundRect( x, y, width, 30, 4 );
 		ctx.fill();
 
-		ctx.fillText( this.failedOrders.length + '/' + this.limit, x + width, y + 36 );
+		ctx.fillText( this.failedOrders.length + '/' + this.ordersWrongLimit, x + width, y + 36 );
 
 		ctx.fillStyle = '#f00';
 		ctx.beginPath();
@@ -547,14 +586,22 @@ js13k.Level = class {
 		this.cauldron.draw( ctx );
 		this.catFg.draw( ctx );
 
-		this._drawScore( ctx );
-		this._drawOrder( ctx );
 		this._drawIngredients( ctx );
+		this._drawScore( ctx );
+
+		if( this.isGameOver ) {
+			this._drawGameOver( ctx );
+			return;
+		}
+
+		this._drawOrder( ctx );
 		this._drawButtons( ctx );
 
 		if( this.stage == 0 ) {
 			this._drawIntro( ctx );
 		}
+
+		this._animGoal?.do( { ctx } );
 	}
 
 
@@ -699,7 +746,7 @@ js13k.Level = class {
 	 * @param {number[]} pos - [x, y]
 	 */
 	onMouseMove( pos ) {
-		if( this.stage == 0 ) {
+		if( this.stage == 0 || this.isGameOver ) {
 			return;
 		}
 
@@ -764,20 +811,73 @@ js13k.Level = class {
 	update( dt ) {
 		this.timer += dt;
 
+		const numDoneOrders = this.doneOrders.length;
+
+		if( !this.isEndlessGame && numDoneOrders == this.ordersCorrectGoal ) {
+			this.isEndlessGame = true;
+
+			this._animGoal = new js13k.Animation(
+				10,
+				( progress, params ) => {
+					const w = 400;
+					const h = 150;
+					let x = ( js13k.w - w ) / 2;
+					let y = 140;
+
+					// Slide in
+					if( progress < 0.2 ) {
+						let f = progress / 0.2;
+						y = -h + Math.sqrt( f ) * ( h + y );
+					}
+					// Slide out
+					else if( progress > 0.8 ) {
+						let f = ( 1 - progress ) / 0.2;
+						y = -h + f * f * ( h + y );
+					}
+
+					params.ctx.fillStyle = '#000';
+					params.ctx.strokeStyle = '#ff0';
+					params.ctx.lineWidth = 2;
+					params.ctx.shadowColor = '#770';
+					params.ctx.shadowBlur = 100;
+					params.ctx.beginPath();
+					params.ctx.roundRect( x, y, w, h, 4 );
+					params.ctx.fill();
+					params.ctx.stroke();
+					params.ctx.shadowBlur = 0;
+
+					params.ctx.fillStyle = '#ff0';
+					params.ctx.font = 'italic 600 28px ' + js13k.FONT_SANS;
+					params.ctx.textAlign = 'center';
+					params.ctx.textBaseline = 'top';
+					params.ctx.fillText( 'Goal achieved', x + w / 2, y + 24 );
+
+					params.ctx.font = '500 20px ' + js13k.FONT_SANS;
+					params.ctx.fillText( 'This shop really landed on its feet!', x + w / 2, y + 70 );
+					params.ctx.fillText( 'From here on it is endless mode.', x + w / 2, y + 100 );
+				},
+				_thisAnimation => {
+					this._animGoal = null;
+				},
+			);
+			return;
+		}
+
+		if( this.failedOrders.length >= this.ordersWrongLimit ) {
+			this.isGameOver = true;
+			return;
+		}
+
 		// Time is up, failed to provide a potion.
 		if( this.currentOrder?.timer?.elapsed() ) {
 			this.verifyPotion();
 		}
 
-		if( this.doneOrders.length == 6 ) {
+		if( numDoneOrders == 4 ) {
 			this.changeStage( 2 );
 		}
-		else if( this.doneOrders.length == 12 ) {
+		else if( numDoneOrders == 10 ) {
 			this.changeStage( 3 );
-		}
-
-		if( this.failedOrders.length >= 10 ) {
-			// TODO: game over
 		}
 
 		this.catBg.update( this.timer );

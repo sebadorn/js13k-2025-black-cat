@@ -66,18 +66,19 @@ js13k.Animation = class {
 
 	/**
 	 *
+	 * @param {object?} params
 	 */
-	do() {
+	do( params ) {
 		if( !this.timer ) {
 			return;
 		}
 
 		if( this.timer.elapsed() ) {
-			this.onDone();
+			this.onDone( this );
 			this.timer = null;
 		}
 		else {
-			this.onUpdate( this.timer.progress() );
+			this.onUpdate( this.timer.progress(), params );
 		}
 	}
 
