@@ -157,7 +157,7 @@ js13k.Level = class {
 	 */
 	constructor() {
 		this.timer = 0;
-		this.ordersCorrectGoal = 20;
+		this.ordersCorrectGoal = 30;
 		this.ordersWrongLimit = 10;
 
 		this.isEndlessGame = false;
@@ -445,78 +445,65 @@ js13k.Level = class {
 	 * @returns {PotionOrder[]}
 	 */
 	_generateOrders( stage ) {
-		const possiblePotions = {};
-
-		for( const key in js13k.Potion ) {
-			/** @type {Potion} */
-			const potion = js13k.Potion[key];
-			const numIngredients = potion.ingredients.length;
-
-			possiblePotions[numIngredients] ??= [];
-			possiblePotions[numIngredients].push( potion );
-		}
-
-		// TODO: Some smart algo:
-		// - Orders should start with and mostly contain potions with the max number of ingredients currently allowed
-		// - But also some lower ones
-		// - Every potion should appear at least once
-		// - Repeat failed orders later again
-
 		/** @type {Potion[]} */
 		const list = [];
 
-		if( stage == 1 ) {
-			list.push( js13k.Potion.Water, js13k.Potion.Water );
+		let timeLimit = 75;
 
-			for( let i = 0; i < 8; i++ ) {
-				const rnd = Math.round( Math.random() * ( possiblePotions[1].length - 1 ) );
-				const potion = possiblePotions[1][rnd];
-				list.push( potion );
-			}
+		if( stage < 2 ) {
+			list.push(
+				js13k.Potion.Water,
+				js13k.Potion.CoolingPotion,
+				js13k.Potion.WarmingPotion,
+			);
+
+			js13k.shuffle( list );
 		}
 		else if( stage == 2 ) {
-			list.push( js13k.Potion.Water );
+			timeLimit = 60;
 
-			for( let i = 0; i < 3; i++ ) {
-				const rnd = Math.round( Math.random() * ( possiblePotions[1].length - 1 ) );
-				const potion = possiblePotions[1][rnd];
-				list.push( potion );
-			}
+			list.push(
+				js13k.Potion.Water,
+				js13k.Potion.CoolingPotion,
+				js13k.Potion.WarmingPotion,
+				js13k.Potion.HealthDrink,
+				js13k.Potion.RefreshingEnergizer,
+				js13k.Potion.RefreshingEnergizer,
+			);
 
-			for( let i = 0; i < 6; i++ ) {
-				const rnd = Math.round( Math.random() * ( possiblePotions[2].length - 1 ) );
-				const potion = possiblePotions[2][rnd];
-				list.push( potion );
-			}
+			js13k.shuffle( list );
+
+			// Start with a potion using the new ingredient
+			list.splice( 0, 0, js13k.Potion.HealthDrink );
 		}
-		else if( stage == 3 ) {
-			list.push( js13k.Potion.Water );
+		else if( stage > 2 ) {
+			timeLimit = 60; // will get reduced further in `nextOrder()` depending on success so far
 
-			for( let i = 0; i < 2; i++ ) {
-				const rnd = Math.round( Math.random() * ( possiblePotions[1].length - 1 ) );
-				const potion = possiblePotions[1][rnd];
-				list.push( potion );
-			}
+			list.push(
+				js13k.Potion.Water,
+				js13k.Potion.CoolingPotion,
+				js13k.Potion.WarmingPotion,
+				js13k.Potion.HealthDrink,
+				js13k.Potion.RefreshingEnergizer,
+				js13k.Potion.CalmingPotion,
+				js13k.Potion.MeditativePotion,
+				js13k.Potion.MeditativePotion,
+				js13k.Potion.TeeAndBlanketPotion,
+				js13k.Potion.AmplitudePotion,
+				js13k.Potion.AmplitudePotion,
+			);
 
-			for( let i = 0; i < 3; i++ ) {
-				const rnd = Math.round( Math.random() * ( possiblePotions[2].length - 1 ) );
-				const potion = possiblePotions[2][rnd];
-				list.push( potion );
-			}
+			js13k.shuffle( list );
 
-			for( let i = 0; i < 4; i++ ) {
-				const rnd = Math.round( Math.random() * ( possiblePotions[3].length - 1 ) );
-				const potion = possiblePotions[3][rnd];
-				list.push( potion );
-			}
+			// Start with potions using the new ingredient
+			list.splice( 0, 0, js13k.Potion.TeeAndBlanketPotion );
+			list.splice( 0, 0, js13k.Potion.CalmingPotion );
 		}
-
-		js13k.shuffle( list );
 
 		return list.map( potion => {
 			return {
 				potion: potion,
-				timeLimit: 90 - this.stage * 15,
+				timeLimit: timeLimit,
 			};
 		} );
 	}
@@ -544,17 +531,11 @@ js13k.Level = class {
 
 		this.stage = newStage;
 
+		// Stage 1
 		this.ingredients = [
 			js13k.IngredientWarm,
 			js13k.IngredientCold,
 		];
-
-		if( newStage >= 1 ) {
-			this.ingredients.push(
-				js13k.IngredientLife, // TODO: remove
-				js13k.IngredientEmotion, // TODO: remove
-			);
-		}
 
 		if( newStage >= 2 ) {
 			this.ingredients.push(
@@ -696,9 +677,15 @@ js13k.Level = class {
 	nextOrder() {
 		this.currentOrder = this.orders.splice( 0, 1 )[0];
 
+		let timeLimit = this.currentOrder.timeLimit;
+
+		if( this.stage > 2 ) {
+			timeLimit = Math.max( 5, timeLimit - this.doneOrders.length );
+		}
+
 		const rnd = Math.round( Math.random() * ( this.currentOrder.potion.desc.length - 1 ) );
 		this.currentOrder.desc =this.currentOrder.potion.desc[rnd];
-		this.currentOrder.timer = new js13k.Timer( this, this.currentOrder.timeLimit );
+		this.currentOrder.timer = new js13k.Timer( this, timeLimit );
 	}
 
 
@@ -876,7 +863,7 @@ js13k.Level = class {
 		if( numDoneOrders == 4 ) {
 			this.changeStage( 2 );
 		}
-		else if( numDoneOrders == 10 ) {
+		else if( numDoneOrders == 12 ) {
 			this.changeStage( 3 );
 		}
 
