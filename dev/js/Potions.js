@@ -50,7 +50,7 @@ js13k.Potion = {
 			js13k.IngredientLife,
 		],
 		desc: [
-			'Just finished workout. Got an energizer?',
+			'Just finished workout. Got\nsome refreshing energizer?',
 		],
 	},
 
@@ -74,7 +74,7 @@ js13k.Potion = {
 			js13k.IngredientEmotion,
 		],
 		desc: [
-			"I'm losing my connection to myself. Like I'm watching myself from behind.",
+			"I'm losing my connection to myself.\nLike I'm watching myself from behind.",
 		],
 	},
 

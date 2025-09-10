@@ -125,14 +125,14 @@ js13k.Button = class {
 			this.x = ( js13k.w - this.w ) / 2;
 		}
 		else if( this.id == js13k.Button.BOTTLE ) {
-			this.x = js13k.w - 380;
-			this.y = 550;
+			this.x = js13k.w / 2 + 410;
+			this.y = 530;
 			text = 'Finish Potion';
 		}
 		else if( this.id == js13k.Button.RESTART ) {
 			this.x = ( js13k.w - 100 ) / 2;
 			this.y = js13k.h / 2 + 280;
-			text = 'Start Over';
+			text = 'Pour Away';
 		}
 
 		ctx.globalAlpha = ( this.id == js13k.Button.INTRO || this.mouseover ) ? 1 : 0.6;
@@ -351,12 +351,15 @@ js13k.Level = class {
 			return;
 		}
 
-		const w = 350;
-		const h = 120;
-		const x = js13k.w - w - 40;
-		const y = 400;
-
+		const timeProgress = this.currentOrder.timer.progress();
+		const animProgress = this.currentOrder.animationTimer.progress();
 		const potion = this.currentOrder.potion;
+		const lines = this.currentOrder.desc.split( '\n' );
+
+		let w = 350;
+		let h = 100 + lines.length * 24;
+		let x = js13k.w - ( w + 40 ) * Math.sqrt( animProgress );
+		let y = 400;
 
 		// Background
 		ctx.fillStyle = '#000';
@@ -368,22 +371,26 @@ js13k.Level = class {
 		ctx.stroke();
 
 		// Time left
-		const timeProgress = this.currentOrder.timer.progress();
 		ctx.fillStyle = '#ff0';
 		ctx.beginPath();
 		ctx.roundRect( x, y, w * ( 1 - timeProgress ), 20, [4, 0, 0] );
 		ctx.fill();
 
-		// Name
+		// Text
 		ctx.fillStyle = '#fff';
 		ctx.textAlign = 'left';
 		ctx.font = 'italic 600 24px ' + js13k.FONT_SERIF;
-		ctx.fillText( this.currentOrder.desc, x + 20, y + 40 );
+
+		for( let i = 0; i < lines.length; i++ ) {
+			const line = lines[i];
+			ctx.fillText( line, x + 20, y + 40 );
+			y += 26;
+		}
 
 		// Info
 		if( potion.ingredients.length > 0 ) {
 			ctx.font = '500 20px ' + js13k.FONT_SANS;
-			ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 80 );
+			ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 60 );
 		}
 	}
 
@@ -399,7 +406,7 @@ js13k.Level = class {
 		ctx.textBaseline = 'top';
 		ctx.font = '600 18px ' + js13k.FONT_MONO;
 
-		const width = 360;
+		const width = 354;
 		const x = js13k.w - width - 40;
 		let y = 60;
 
@@ -412,7 +419,7 @@ js13k.Level = class {
 		ctx.roundRect( x, y, width, 30, 4 );
 		ctx.fill();
 
-		ctx.fillText( this.doneOrders.length + '/' + this.ordersCorrectGoal, x + width, y + 36 );
+		ctx.fillText( 'Done ' + this.doneOrders.length + '/' + this.ordersCorrectGoal, x + width, y + 36 );
 
 		ctx.fillStyle = '#6a267a';
 		ctx.beginPath();
@@ -429,7 +436,7 @@ js13k.Level = class {
 		ctx.roundRect( x, y, width, 30, 4 );
 		ctx.fill();
 
-		ctx.fillText( this.failedOrders.length + '/' + this.ordersWrongLimit, x + width, y + 36 );
+		ctx.fillText( 'Wrong ' + this.failedOrders.length + '/' + this.ordersWrongLimit, x + width, y + 36 );
 
 		ctx.fillStyle = '#f00';
 		ctx.beginPath();
@@ -686,6 +693,7 @@ js13k.Level = class {
 		const rnd = Math.round( Math.random() * ( this.currentOrder.potion.desc.length - 1 ) );
 		this.currentOrder.desc =this.currentOrder.potion.desc[rnd];
 		this.currentOrder.timer = new js13k.Timer( this, timeLimit );
+		this.currentOrder.animationTimer = new js13k.Timer( this, 0.7 );
 	}
 
 
@@ -878,6 +886,10 @@ js13k.Level = class {
 	 * @param {Ingredient[]?} contents
 	 */
 	verifyPotion( contents ) {
+		if( !this.currentOrder ) {
+			return;
+		}
+
 		const potion = this.getPotion( contents );
 		const result = this.scoreOrder( potion );
 

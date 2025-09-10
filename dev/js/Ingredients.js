@@ -27,8 +27,8 @@ js13k.IngredientWarm = {
 
 			// Bottle glas
 			this.ctx.lineWidth = 4;
-			this.ctx.fillStyle = '#ffffff2f';
-			this.ctx.strokeStyle = '#fff';
+			this.ctx.fillStyle = '#ffffff1f';
+			this.ctx.strokeStyle = '#ccc';
 			this.ctx.beginPath();
 			this.ctx.moveTo( 2, 42 );
 			this.ctx.lineTo( 2, this.h - 2 );
@@ -39,8 +39,8 @@ js13k.IngredientWarm = {
 			this.ctx.lineTo( 40, 12 );
 			this.ctx.lineTo( 40, 42 );
 			this.ctx.closePath();
-			this.ctx.stroke();
 			this.ctx.fill();
+			this.ctx.stroke();
 
 			// Content
 			const points = [
