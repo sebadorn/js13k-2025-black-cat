@@ -93,6 +93,10 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	 * @param {Ingredient} ingredient
 	 */
 	addContent( ingredient ) {
+		if( this.contents.includes( ingredient ) ) {
+			return;
+		}
+
 		this.contents.push( ingredient );
 		this._needsRedraw = true;
 	}

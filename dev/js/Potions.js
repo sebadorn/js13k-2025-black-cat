@@ -19,6 +19,7 @@ js13k.Potion = {
 		ingredients: [js13k.IngredientWarm],
 		desc: [
 			'Something to warm me up.',
+			'I feel so cold.',
 		],
 	},
 
@@ -26,7 +27,7 @@ js13k.Potion = {
 		name: 'Cooling Potion',
 		ingredients: [js13k.IngredientCold],
 		desc: [
-			'I am close to a heatstroke!',
+			"Ugh, it's so hot!",
 		],
 		get alternatives() {
 			return [js13k.Potion.Water];
@@ -39,7 +40,8 @@ js13k.Potion = {
 		name: 'Health Drink',
 		ingredients: [js13k.IngredientLife],
 		desc: [
-			'Ugh, I feel sick...',
+			'I feel sick...',
+			'My stomach hurts.',
 		],
 	},
 
@@ -51,6 +53,7 @@ js13k.Potion = {
 		],
 		desc: [
 			'Just finished workout. Got\nsome refreshing energizer?',
+			'Give me a fresh kick!',
 		],
 	},
 
@@ -63,8 +66,11 @@ js13k.Potion = {
 			js13k.IngredientEmotion,
 		],
 		desc: [
-			'I need something to calm me down.',
+			'I need something to calm me down.\nTo help me think straight again.',
 		],
+		get alternatives() {
+			return [js13k.Potion.TeeAndBlanketPotion];
+		},
 	},
 
 	MeditativePotion: {
@@ -74,7 +80,7 @@ js13k.Potion = {
 			js13k.IngredientEmotion,
 		],
 		desc: [
-			"I'm losing my connection to myself.\nLike I'm watching myself from behind.",
+			'I have this mental fog...',
 		],
 	},
 
@@ -86,6 +92,7 @@ js13k.Potion = {
 		],
 		desc: [
 			'I had a really bad day...',
+			'Can you bottle the feeling of\nwrapping yourself in a blanket?',
 		],
 		get alternatives() {
 			return [js13k.Potion.MeditativePotion];
@@ -100,7 +107,8 @@ js13k.Potion = {
 			js13k.IngredientEmotion,
 		],
 		desc: [
-			'My emotions feel so... flat. I want to try how *more* feels like.',
+			'My emotions feel so... flat.\nI want to try how *more* feels like.',
+			'Give me conflicting feelings.',
 		],
 	},
 

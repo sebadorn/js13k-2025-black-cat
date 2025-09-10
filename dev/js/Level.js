@@ -811,6 +811,8 @@ js13k.Level = class {
 		if( !this.isEndlessGame && numDoneOrders == this.ordersCorrectGoal ) {
 			this.isEndlessGame = true;
 
+			setTimeout( () => js13k.Audio.play( js13k.Audio.meow ), 2000 );
+
 			this._animGoal = new js13k.Animation(
 				10,
 				( progress, params ) => {
