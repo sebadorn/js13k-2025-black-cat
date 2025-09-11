@@ -28,6 +28,7 @@ js13k.Potion = {
 		ingredients: [js13k.IngredientCold],
 		desc: [
 			"Ugh, it's so hot!",
+			'I need to cool down.',
 		],
 		get alternatives() {
 			return [js13k.Potion.Water];
@@ -42,6 +43,7 @@ js13k.Potion = {
 		desc: [
 			'I feel sick...',
 			'My stomach hurts.',
+			'A witchy herbal tee, please.'
 		],
 	},
 
@@ -53,7 +55,7 @@ js13k.Potion = {
 		],
 		desc: [
 			'Just finished workout. Got\nsome refreshing energizer?',
-			'Give me a fresh kick!',
+			'Do you have a cold and healthy drink?',
 		],
 	},
 
@@ -67,6 +69,7 @@ js13k.Potion = {
 		],
 		desc: [
 			'I need something to calm me down.\nTo help me think straight again.',
+			'My fiery temper gets in my way.',
 		],
 		get alternatives() {
 			return [js13k.Potion.TeeAndBlanketPotion];
@@ -108,7 +111,7 @@ js13k.Potion = {
 		],
 		desc: [
 			'My emotions feel so... flat.\nI want to try how *more* feels like.',
-			'Give me conflicting feelings.',
+			'Give me conflicting feelings.\nYou heard me.',
 		],
 	},
 

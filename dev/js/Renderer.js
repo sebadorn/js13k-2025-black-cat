@@ -194,7 +194,7 @@ js13k.Renderer = {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
 
-			if( !timeoutMove ) {
+			if( !timeoutMove && !this.isPaused ) {
 				timeoutMove = setTimeout( () => {
 					this.level?.onMouseMove( this.getScaledCursor() );
 					timeoutMove = null;
@@ -206,7 +206,9 @@ js13k.Renderer = {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
 
-			this.level?.onClick( this.getScaledCursor() );
+			if( !this.isPaused ) {
+				this.level?.onClick( this.getScaledCursor() );
+			}
 		} );
 	},
 
