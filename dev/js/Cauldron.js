@@ -20,6 +20,9 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		/** @type {Ingredient[]} */
 		this.contents = [];
 
+		/** @type {js13k.Animation[]} */
+		this._animAddIngredients = [];
+
 		[this.cnvFluid, this.ctxFluid] = js13k.Renderer.getOffscreenCanvas( this.w * 0.72, this.h * 0.28 );
 	}
 
@@ -164,7 +167,7 @@ js13k.Cauldron = class extends js13k.LevelObject {
 			return;
 		}
 
-		this._animAddIngredient = new js13k.Animation(
+		this._animAddIngredients.push( new js13k.Animation(
 			2,
 			( progress, params ) => {
 				const progRev = 1 - progress;
@@ -202,10 +205,14 @@ js13k.Cauldron = class extends js13k.LevelObject {
 
 				this.ctx.globalAlpha = 1;
 			},
-			_thisAnim => {
-				this._animAddIngredient = null;
+			thisAnim => {
+				const index = this._animAddIngredients.indexOf( thisAnim );
+
+				if( index >= 0 ) {
+					this._animAddIngredients.splice( index, 1 );
+				}
 			},
-		);
+		) );
 
 		js13k.Audio.play( js13k.Audio.drop );
 
@@ -274,10 +281,10 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		this._drawBubble( x + 100, y + 20, 50 );
 		this._drawBubble( x + 180, y + 40, 75 );
 
-		this._animAddIngredient?.do( {
+		this._animAddIngredients.forEach( anim => anim.do( {
 			x: xFluid + this.cnvFluid.width / 2,
 			y: yFluid + this.cnvFluid.height / 2
-		} );
+		} ) );
 
 		ctx.drawImage( this.cnv, this.calcCenterX(), js13k.h - this.h + 100 );
 

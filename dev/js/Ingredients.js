@@ -89,13 +89,14 @@ js13k.IngredientCold = {
 
 
 	name: 'Crystal Ice',
-	fluidColor: '#649fa3',
+	fluidColor: '#6ebec4',
 
 	x: 100,
 	y: 430,
 	w: 180,
 	h: 150,
 
+	/** @type {js13k.Animation[]} */
 	_animations: [],
 
 
@@ -109,7 +110,7 @@ js13k.IngredientCold = {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
 			// Content
-			this.ctx.fillStyle = '#b3e7e9';
+			this.ctx.fillStyle = this.fluidColor;
 			this.ctx.beginPath();
 			this.ctx.ellipse( this.w / 2, this.h / 2 + 20, this.w / 2 - 20, this.h / 2 - 40, 0, 0, Math.PI, true );
 			this.ctx.fill();
@@ -144,7 +145,10 @@ js13k.IngredientCold = {
 				},
 				thisAnimation => {
 					const index = this._animations.indexOf( thisAnimation );
-					this._animations.splice( index, 1 );
+
+					if( index >= 0 ) {
+						this._animations.splice( index, 1 );
+					}
 				},
 			) );
 		}
@@ -271,7 +275,10 @@ js13k.IngredientLife = {
 				},
 				thisAnimation => {
 					const index = this._animations.indexOf( thisAnimation );
-					this._animations.splice( index, 1 );
+
+					if( index >= 0 ) {
+						this._animations.splice( index, 1 );
+					}
 				},
 			) );
 		}

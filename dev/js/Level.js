@@ -970,7 +970,10 @@ js13k.Level = class {
 			_progress => {},
 			thisAnimation => {
 				const index = this.animations.indexOf( thisAnimation );
-				this.animations.splice( index, 1 );
+
+				if( index >= 0 ) {
+					this.animations.splice( index, 1 );
+				}
 
 				if( result > 0 ) {
 					this.doneOrders.push( this.currentOrder );

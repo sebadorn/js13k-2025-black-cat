@@ -31,8 +31,8 @@ js13k.CatFg = class extends js13k.LevelObject {
 		const ry = 40;
 		this.ctx.fillStyle = '#111';
 		this.ctx.beginPath();
-		this.ctx.ellipse( 380, 120, rx, ry, 0, 0, Math.PI * 2 );
-		this.ctx.ellipse( this.w - 340, 160, rx, ry, 0, 0, Math.PI * 2 );
+		this.ctx.ellipse( 380, 120, rx, ry, -20 * Math.PI / 180, 0, Math.PI * 2 );
+		this.ctx.ellipse( this.w - 340, 160, rx, ry, 20 * Math.PI / 180, 0, Math.PI * 2 );
 		this.ctx.fill();
 	}
 
@@ -44,8 +44,27 @@ js13k.CatFg = class extends js13k.LevelObject {
 	draw( ctx ) {
 		if( this._needsRedraw ) {
 			this.ctx.clearRect( 0, 0, this.w, this.h );
+
 			this.ctx.fillStyle = '#534320';
-			this.ctx.fillRect( 400, 0, 40, 340 );
+			this.ctx.beginPath();
+			this.ctx.roundRect( 400, 0, 40, 340, 4 );
+			this.ctx.fill();
+			this.ctx.beginPath();
+			this.ctx.ellipse( 420, 340, 45, 25, 0, Math.PI, 0 );
+			this.ctx.fill();
+
+			this.ctx.fillStyle = '#42361d';
+			this.ctx.beginPath();
+			this.ctx.ellipse( 420, 340, 35, 15, 0, Math.PI, 0 );
+			this.ctx.fill();
+
+			this.ctx.lineWidth = 3;
+			this.ctx.strokeStyle = '#ffffff3f';
+			this.ctx.beginPath();
+			this.ctx.moveTo( 375, 342 );
+			this.ctx.lineTo( 465, 342 );
+			this.ctx.stroke();
+
 			this._drawPaws();
 		}
 
@@ -55,9 +74,10 @@ js13k.CatFg = class extends js13k.LevelObject {
 
 		const centerX = x + this.w / 2 + 20;
 		const centerY = y + this.h / 2 - 170;
+		const angleDeg = Math.sin( timer ) * 10;
 
 		ctx.translate( centerX, centerY );
-		ctx.rotate( Math.sin( timer ) * 10 * Math.PI / 180 );
+		ctx.rotate( angleDeg * Math.PI / 180 );
 		ctx.translate( -centerX, -centerY );
 
 		ctx.drawImage( this.cnv, x, y );

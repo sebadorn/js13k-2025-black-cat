@@ -42,7 +42,6 @@ js13k.Potion = {
 		ingredients: [js13k.IngredientLife],
 		desc: [
 			'I feel sick...',
-			'My stomach hurts.',
 			'A witchy herbal tee, please.'
 		],
 	},
