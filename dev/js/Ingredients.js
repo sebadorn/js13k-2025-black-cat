@@ -22,7 +22,14 @@ js13k.IngredientWarm = {
 			[this.cnv, this.ctx] = js13k.Renderer.getOffscreenCanvas( this.w, this.h );
 
 			// Cork
-			this.ctx.fillStyle = '#61401a';
+			const gradient = this.ctx.createLinearGradient(
+				42, 0, 42 + this.w - 84, 0
+			);
+			gradient.addColorStop( 0, '#52381b' );
+			gradient.addColorStop( 0.5, '#573b1c' );
+			gradient.addColorStop( 1, '#52381b' );
+
+			this.ctx.fillStyle = gradient;
 			this.ctx.fillRect( 42, 0, this.w - 84, 52 );
 
 			// Bottle glas
@@ -116,7 +123,14 @@ js13k.IngredientCold = {
 			this.ctx.fill();
 
 			// Bowl
-			this.ctx.fillStyle = '#4d5b6e';
+			const gradient = this.ctx.createRadialGradient(
+				this.w / 2, this.h / 2 + 10, 10,
+				this.w / 2, this.h / 2 + 10, this.w
+			);
+			gradient.addColorStop( 0, '#4d5b6e' );
+			gradient.addColorStop( 1, '#393e44' );
+
+			this.ctx.fillStyle = gradient;
 			this.ctx.beginPath();
 			this.ctx.ellipse( this.w / 2, this.h / 2 + 10, this.w / 2, this.h / 2, 0, 0, Math.PI );
 			this.ctx.fill();
@@ -328,7 +342,27 @@ js13k.IngredientEmotion = {
 		this.ctx.fillStyle = '#ddd';
 		this.ctx.fillRect( x, this.h - h, w, h );
 
-		this.ctx.fillStyle = '#8143a5';
+		const gradient = this.ctx.createLinearGradient(
+			x, this.h - h,
+			x + w, this.h - h
+		);
+		gradient.addColorStop( 0, '#0000002f' );
+		gradient.addColorStop( 1, '#00000000' );
+
+		this.ctx.fillStyle = gradient;
+		this.ctx.fillRect( x, this.h - h, w, h );
+
+		this.ctx.fillStyle = '#0000001f';
+		this.ctx.fillRect( x, this.h - h, w, w / 10 );
+
+		const gradientTop = this.ctx.createRadialGradient(
+			x + w / 2, y, w,
+			x + w / 2, y, w * 2
+		);
+		gradientTop.addColorStop( 0, '#8143a5' );
+		gradientTop.addColorStop( 1, '#6e4088' );
+
+		this.ctx.fillStyle = gradientTop;
 		this.ctx.beginPath();
 		this.ctx.ellipse( x + w / 2, y, w * 2, w * 1.5, 0, 0, Math.PI, true );
 		this.ctx.fill();

@@ -291,6 +291,8 @@ js13k.Level = class {
 		// Shelves
 		ctx.fillStyle = '#683f24';
 		ctx.fillRect( 80, 580, 420, 25 );
+		ctx.fillStyle = '#0000001f';
+		ctx.fillRect( 80, 603, 420, 2 );
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
@@ -476,7 +478,7 @@ js13k.Level = class {
 
 		ctx.fillStyle = '#6a267a';
 		ctx.beginPath();
-		ctx.roundRect( x + 3, y + 3, Math.max( 6, width * progressGoal - 6 ), 24, 4 );
+		ctx.roundRect( x + 3, y + 3, Math.max( 4, width * progressGoal - 6 ), 24, 4 );
 		ctx.fill();
 
 		// Progress on failed orders
@@ -493,7 +495,7 @@ js13k.Level = class {
 
 		ctx.fillStyle = '#f00';
 		ctx.beginPath();
-		ctx.roundRect( x + 3, y + 3, Math.max( 6, width * progressLimit - 6 ), 24, 4 );
+		ctx.roundRect( x + 3, y + 3, Math.max( 4, width * progressLimit - 6 ), 24, 4 );
 		ctx.fill();
 	}
 
@@ -979,7 +981,7 @@ js13k.Level = class {
 
 		// Give some time between orders and to play out animation
 		this.animations.push( new js13k.Animation(
-			1,
+			0.85,
 			_progress => {},
 			thisAnimation => {
 				const index = this.animations.indexOf( thisAnimation );

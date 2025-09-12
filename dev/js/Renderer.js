@@ -125,14 +125,14 @@ js13k.Renderer = {
 			this.level.update( dt );
 			this.draw();
 
-			// Draw FPS info
-			this.ctx.fillStyle = '#fff';
-			this.ctx.font = '600 12px ' + js13k.FONT_MONO;
-			this.ctx.textAlign = 'left';
-			this.ctx.fillText(
-				String( Math.round( js13k.TARGET_FPS / dt ) ).padStart( 3, '0' ) + ' FPS, ' + this.scale.toFixed( 5 ),
-				10, 20
-			);
+			// // Draw FPS info
+			// this.ctx.fillStyle = '#fff';
+			// this.ctx.font = '600 12px ' + js13k.FONT_MONO;
+			// this.ctx.textAlign = 'left';
+			// this.ctx.fillText(
+			// 	String( Math.round( js13k.TARGET_FPS / dt ) ).padStart( 3, '0' ) + ' FPS, ' + this.scale.toFixed( 5 ),
+			// 	10, 20
+			// );
 		}
 
 		this.last = timestamp;

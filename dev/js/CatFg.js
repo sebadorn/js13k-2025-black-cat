@@ -41,8 +41,9 @@ js13k.CatFg = class extends js13k.LevelObject {
 
 			this.ctx.fillStyle = '#534320';
 			this.ctx.beginPath();
-			this.ctx.roundRect( 400, 0, 40, 340, 4 );
+			this.ctx.roundRect( 400, 0, 40, 340, 20 );
 			this.ctx.fill();
+
 			this.ctx.beginPath();
 			this.ctx.ellipse( 420, 340, 45, 25, 0, Math.PI, 0 );
 			this.ctx.fill();
