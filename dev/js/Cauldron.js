@@ -164,6 +164,51 @@ js13k.Cauldron = class extends js13k.LevelObject {
 			return;
 		}
 
+		this._animAddIngredient = new js13k.Animation(
+			2,
+			( progress, params ) => {
+				const progRev = 1 - progress;
+
+				this.ctx.strokeStyle = '#ffffff7f';
+				this.ctx.lineWidth = Math.max( 2, 10 * progRev );
+				this.ctx.globalAlpha = progRev;
+
+				this.ctx.beginPath();
+				this.ctx.ellipse(
+					params.x, params.y - 20,
+					Math.max( 0.5, 200 * progress ),
+					Math.max( 0.5, 60 * progress ),
+					0, 0, Math.PI * 2
+				);
+				this.ctx.stroke();
+
+				const f = ( Math.sin( progress * Math.PI ) + 1 ) / 2;
+				const offsetX = 20 + 100 * progress;
+				const offsetY = 160 * f - 20;
+				const r = Math.max( 2, 10 * progRev );
+
+				this.ctx.lineWidth = 1;
+				this.ctx.fillStyle = ingredient.fluidColor;
+
+				this.ctx.beginPath();
+				this.ctx.arc( params.x - offsetX, params.y - offsetY, r, 0, Math.PI * 2 );
+				this.ctx.fill();
+				this.ctx.stroke();
+
+				this.ctx.beginPath();
+				this.ctx.arc( params.x + offsetX, params.y - offsetY, r, 0, Math.PI * 2 );
+				this.ctx.fill();
+				this.ctx.stroke();
+
+				this.ctx.globalAlpha = 1;
+			},
+			_thisAnim => {
+				this._animAddIngredient = null;
+			},
+		);
+
+		js13k.Audio.play( js13k.Audio.drop );
+
 		this.contents.push( ingredient );
 		this._needsRedraw = true;
 
@@ -213,10 +258,12 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		this.ctx.fill();
 
 		// fluid
+		let xFluid = x / 2 - 90;
+		let yFluid = y - this.h * 0.06;
 		this._updateFluid();
 		this.ctx.save();
 		this.ctx.clip();
-		this.ctx.drawImage( this.cnvFluid, x / 2 - 90, y - this.h * 0.06 );
+		this.ctx.drawImage( this.cnvFluid, xFluid, yFluid );
 		this.ctx.restore();
 
 		// bubbles
@@ -226,6 +273,11 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		this._drawBubble( x + 30, y + 60, 25 );
 		this._drawBubble( x + 100, y + 20, 50 );
 		this._drawBubble( x + 180, y + 40, 75 );
+
+		this._animAddIngredient?.do( {
+			x: xFluid + this.cnvFluid.width / 2,
+			y: yFluid + this.cnvFluid.height / 2
+		} );
 
 		ctx.drawImage( this.cnv, this.calcCenterX(), js13k.h - this.h + 100 );
 
