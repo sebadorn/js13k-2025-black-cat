@@ -54,7 +54,7 @@ js13k.Potion = {
 		],
 		desc: [
 			'Just finished workout. Got\nsome refreshing energizer?',
-			'Do you have a cold and healthy drink?',
+			'Do you have a cold\nand healthy drink?',
 		],
 	},
 

@@ -361,93 +361,96 @@ js13k.Level = class {
 		const lines = co.desc.split( '\n' );
 		const hasScore = typeof co.score === 'number';
 
+		const s = js13k.Renderer.scale;
 		let w = 350;
 		let h = 100 + lines.length * 24;
-		let x = js13k.w - ( w + 40 ) * Math.sqrt( animProgress );
+		let x = js13k.w - ( w + 40 ) * Math.sqrt( hasScore ? 1 : animProgress );
 		let y = 400;
 
 		if( hasScore ) {
-			x = js13k.w - w / 2 - 40;
-			y += h / 2;
+			const x2 = js13k.w - w / 2 - 40;
+			const y2 = 400 + h / 2 - 160 * animProgress;
 
 			const colors = {
 				'-1': '#f00',
 				'0': '#fff',
 				'1': '#ff0',
 			};
-			const offset = 30;
-			const offsetDia = 20;
-			const length = 40;
-			const lengthDia = length * 0.6;
 
 			ctx.globalAlpha = 1 - ( animProgress * animProgress );
 			ctx.lineCap = 'round';
-			ctx.lineWidth = 6;
-			ctx.strokeStyle = colors[co.score.toString()];
+			ctx.lineWidth = 10;
+			ctx.fillStyle = ctx.strokeStyle = colors[co.score.toString()];
 
 			ctx.beginPath();
+			ctx.arc( x2 - 30, y2, 10, 0, Math.PI * 2 );
+			ctx.arc( x2 + 30, y2, 10, 0, Math.PI * 2 );
+			ctx.fill();
 
-			// to top
-			ctx.moveTo( x, y - offset );
-			ctx.lineTo( x, y - offset - length );
-			// to right
-			ctx.moveTo( x + offset, y );
-			ctx.lineTo( x + offset + length, y );
-			// to bottom
-			ctx.moveTo( x, y + offset );
-			ctx.lineTo( x, y + offset + length );
-			// to left
-			ctx.moveTo( x - offset, y );
-			ctx.lineTo( x - offset - length, y );
-
-			ctx.moveTo( x + offsetDia, y - offsetDia );
-			ctx.lineTo( x + offsetDia + lengthDia, y - offsetDia - lengthDia );
-
-			ctx.moveTo( x + offsetDia, y + offsetDia );
-			ctx.lineTo( x + offsetDia + lengthDia, y + offsetDia + lengthDia );
-
-			ctx.moveTo( x - offsetDia, y - offsetDia );
-			ctx.lineTo( x - offsetDia - lengthDia, y - offsetDia - lengthDia );
-
-			ctx.moveTo( x - offsetDia, y + offsetDia );
-			ctx.lineTo( x - offsetDia - lengthDia, y + offsetDia + lengthDia );
-
+			ctx.beginPath();
+			ctx.arc( x2, y2 + 30, 80, 0, Math.PI * 2 );
 			ctx.stroke();
+
+			if( co.score == 1 ) {
+				ctx.beginPath();
+				ctx.ellipse( x2, y2 + 45, 35, 20, 0, 0, Math.PI );
+				ctx.stroke();
+			}
+			else if( co.score == -1 ) {
+				ctx.beginPath();
+				ctx.ellipse( x2, y2 + 60, 35, 20, 0, Math.PI, 0 );
+				ctx.stroke();
+			}
+			else if( co.score == 0 ) {
+				ctx.beginPath();
+				ctx.moveTo( x2 - 35, y2 + 50 );
+				ctx.lineTo( x2 + 35, y2 + 50 );
+				ctx.stroke();
+			}
+
 			ctx.globalAlpha = 1;
+
+			y += ( js13k.h - 390 ) * animProgress * animProgress;
+			const centerY = y + h / 2;
+
+			ctx.translate( x, centerY );
+			ctx.rotate( 10 * Math.PI / 180 );
+			ctx.translate( -x, -centerY );
 		}
-		else {
-			// Background
-			ctx.fillStyle = '#000';
-			ctx.strokeStyle = '#ff0';
-			ctx.lineWidth = 2;
-			ctx.beginPath();
-			ctx.roundRect( x, y, w, h, 4 );
-			ctx.fill();
-			ctx.stroke();
 
-			// Time left
-			ctx.fillStyle = '#ff0';
-			ctx.beginPath();
-			ctx.roundRect( x, y, w * ( 1 - timeProgress ), 20, [4, 0, 0] );
-			ctx.fill();
+		// Background
+		ctx.fillStyle = '#000';
+		ctx.strokeStyle = '#ff0';
+		ctx.lineWidth = 2;
+		ctx.beginPath();
+		ctx.roundRect( x, y, w, h, 4 );
+		ctx.fill();
+		ctx.stroke();
 
-			// Text
-			ctx.fillStyle = '#fff';
-			ctx.textAlign = 'left';
-			ctx.font = 'italic 600 22px ' + js13k.FONT_SERIF;
+		// Time left
+		ctx.fillStyle = '#ff0';
+		ctx.beginPath();
+		ctx.roundRect( x, y, Math.max( 1, w * ( 1 - timeProgress ) ), 20, [4, 0, 0] );
+		ctx.fill();
 
-			for( let i = 0; i < lines.length; i++ ) {
-				const line = lines[i];
-				ctx.fillText( line, x + 20, y + 40 );
-				y += 26;
-			}
+		// Text
+		ctx.fillStyle = '#fff';
+		ctx.textAlign = 'left';
+		ctx.font = 'italic 600 22px ' + js13k.FONT_SERIF;
 
-			// Info
-			if( potion.ingredients.length > 0 ) {
-				ctx.font = '500 18px ' + js13k.FONT_SANS;
-				ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 60 );
-			}
+		for( let i = 0; i < lines.length; i++ ) {
+			const line = lines[i];
+			ctx.fillText( line, x + 20, y + 40 );
+			y += 26;
 		}
+
+		// Info
+		if( potion.ingredients.length > 0 ) {
+			ctx.font = '500 18px ' + js13k.FONT_SANS;
+			ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 60 );
+		}
+
+		ctx.setTransform( s, 0, 0, s, 0, 0 );
 	}
 
 
@@ -479,7 +482,7 @@ js13k.Level = class {
 
 		ctx.fillStyle = '#6a267a';
 		ctx.beginPath();
-		ctx.roundRect( x + 2, y + 2, Math.max( 6, width * progressGoal - 4 ), 26, 4 );
+		ctx.roundRect( x + 3, y + 3, Math.max( 6, width * progressGoal - 6 ), 24, 4 );
 		ctx.fill();
 
 		// Progress on failed orders
@@ -496,7 +499,7 @@ js13k.Level = class {
 
 		ctx.fillStyle = '#f00';
 		ctx.beginPath();
-		ctx.roundRect( x + 2, y + 2, Math.max( 6, width * progressLimit - 4 ), 26, 4 );
+		ctx.roundRect( x + 3, y + 3, Math.max( 6, width * progressLimit - 6 ), 24, 4 );
 		ctx.fill();
 	}
 
