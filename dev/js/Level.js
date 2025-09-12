@@ -598,6 +598,9 @@ js13k.Level = class {
 		this.ingredients = [
 			js13k.IngredientWarm,
 			js13k.IngredientCold,
+			// TODO: remove
+			js13k.IngredientEmotion,
+			js13k.IngredientLife,
 		];
 
 		if( newStage >= 2 ) {

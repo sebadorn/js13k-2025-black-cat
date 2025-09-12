@@ -164,7 +164,7 @@ js13k.IngredientLife = {
 
 
 	name: 'Dried Herbs',
-	fluidColor: '#074',
+	fluidColor: '#007744',
 
 	x: 0,
 	y: 0,

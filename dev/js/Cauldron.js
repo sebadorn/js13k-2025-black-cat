@@ -77,8 +77,76 @@ js13k.Cauldron = class extends js13k.LevelObject {
 
 		const numIngs = this.contents.length;
 
-		if( numIngs > 0 ) {
-			fluidColor = this.contents[numIngs - 1].fluidColor;
+		if( numIngs == 1 ) {
+			fluidColor = this.contents[0].fluidColor;
+		}
+		else if( numIngs > 1 ) {
+			const check = [
+				['#000000', js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientEmotion, js13k.IngredientLife],
+				['#000000', js13k.IngredientWarm, js13k.IngredientLife, js13k.IngredientEmotion],
+				['#000000', js13k.IngredientCold, js13k.IngredientLife, js13k.IngredientEmotion],
+				['#000000', js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientEmotion],
+				['#000000', js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientLife],
+				['#614c6e', js13k.IngredientCold, js13k.IngredientWarm],
+				['#c1e61f', js13k.IngredientCold, js13k.IngredientLife],
+				['#10707c', js13k.IngredientCold, js13k.IngredientEmotion],
+				['#b9c427', js13k.IngredientWarm, js13k.IngredientLife],
+				['#ad1851', js13k.IngredientWarm, js13k.IngredientEmotion],
+				['#218118', js13k.IngredientLife, js13k.IngredientEmotion],
+			];
+
+			/** @type {string[]} */
+			let colors = null;
+
+			for( let i = 0; i < check.length; i++ ) {
+				const entry = check[i];
+				let isMatch = true;
+				colors = [];
+
+				for( let j = 1; j < entry.length; j++ ) {
+					if( !this.contents.includes( entry[j] ) ) {
+						isMatch = false;
+						break;
+					}
+
+					colors.push( entry[j].fluidColor );
+				}
+
+				if( isMatch ) {
+					fluidColor = entry[0];
+					break;
+				}
+			}
+
+			const r = [];
+			const g = [];
+			const b = [];
+
+			colors.forEach( c => {
+				r.push( parseInt( c.substring( 1, 3 ), 16 ) );
+				g.push( parseInt( c.substring( 3, 5 ), 16 ) );
+				b.push( parseInt( c.substring( 5, 7 ), 16 ) );
+			} );
+
+			const steps = colors.length;
+			this.colorTimer ??= new js13k.Timer( this.level, 2 );
+			this.colorStart ??= 0;
+			this.colorEnd ??= 1;
+
+			if( this.colorTimer.elapsed() ) {
+				this.colorStart = ++this.colorStart % steps;
+				this.colorEnd = ++this.colorEnd % steps;
+				this.colorTimer.set( 2 );
+			}
+
+			const progress = this.colorTimer.progress();
+			const pRev = 1 - progress;
+
+			let rNow = r[this.colorStart] * pRev + r[this.colorEnd] * progress;
+			let gNow = g[this.colorStart] * pRev + g[this.colorEnd] * progress;
+			let bNow = b[this.colorStart] * pRev + b[this.colorEnd] * progress;
+
+			fluidColor = `rgb(${rNow},${gNow},${bNow})`;
 		}
 
 		this.ctxFluid.fillStyle = fluidColor;
