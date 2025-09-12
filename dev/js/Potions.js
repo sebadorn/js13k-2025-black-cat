@@ -6,48 +6,56 @@ js13k.Potion = {
 	// Starter ingredients available
 
 	Water: {
-		name: 'Just water',
 		ingredients: [],
 		desc: [
-			'Just a water, please.',
-			"I'm thirsty.",
+			'Just a water, please',
+			"I'm thirsty",
 		],
 	},
 
 	WarmingPotion: {
-		name: 'Warming Potion',
 		ingredients: [js13k.IngredientWarm],
 		desc: [
-			'Something to warm me up.',
-			'I feel so cold.',
+			'Something to warm me up',
+			'I feel so cold',
 		],
 	},
 
 	CoolingPotion: {
-		name: 'Cooling Potion',
 		ingredients: [js13k.IngredientCold],
 		desc: [
 			"Ugh, it's so hot!",
-			'I need to cool down.',
+			'I need to cool down',
 		],
 		get alternatives() {
 			return [js13k.Potion.Water];
 		},
 	},
 
-	// Ingredient Life added
-
-	HealthDrink: {
-		name: 'Health Drink',
-		ingredients: [js13k.IngredientLife],
+	ColdWithHot: {
+		ingredients: [
+			js13k.IngredientWarm,
+			js13k.IngredientCold,
+		],
 		desc: [
-			'I feel sick...',
-			'A witchy herbal tee, please.'
+			'A cold drink with hot fruits',
 		],
 	},
 
+	// Ingredient Life added
+
+	HealthDrink: {
+		ingredients: [js13k.IngredientLife],
+		desc: [
+			'I feel sick...',
+			'A witchy herbal tee, please'
+		],
+		get alternatives() {
+			return [js13k.Potion.FruitTea];
+		},
+	},
+
 	RefreshingEnergizer: {
-		name: 'Refreshing Energizer',
 		ingredients: [
 			js13k.IngredientCold,
 			js13k.IngredientLife,
@@ -58,17 +66,38 @@ js13k.Potion = {
 		],
 	},
 
+	FruitTea: {
+		ingredients: [
+			js13k.IngredientWarm,
+			js13k.IngredientLife,
+		],
+		desc: [
+			'A health potion, but can\nyou make it tasty?',
+		],
+	},
+
+	ColdWarmHealthy: {
+		ingredients: [
+			js13k.IngredientCold,
+			js13k.IngredientWarm,
+			js13k.IngredientLife,
+		],
+		desc: [
+			'Berries and herbs on ice.',
+			'Herbs with berries on ice.',
+		],
+	},
+
 	// Ingredient Emotion added
 
 	CalmingPotion: {
-		name: 'Calming Potion',
 		ingredients: [
-			js13k.IngredientCold,
 			js13k.IngredientEmotion,
+			js13k.IngredientCold,
 		],
 		desc: [
 			'I need something to calm me down.\nTo help me think straight again.',
-			'My fiery temper gets in my way.',
+			'My fiery temper gets in my way',
 		],
 		get alternatives() {
 			return [js13k.Potion.TeeAndBlanketPotion];
@@ -76,10 +105,9 @@ js13k.Potion = {
 	},
 
 	MeditativePotion: {
-		name: 'Meditative Potion',
 		ingredients: [
-			js13k.IngredientLife,
 			js13k.IngredientEmotion,
+			js13k.IngredientLife,
 		],
 		desc: [
 			'I have this mental fog...',
@@ -87,7 +115,6 @@ js13k.Potion = {
 	},
 
 	TeeAndBlanketPotion: {
-		name: 'Tee-and-a-Blanket Potion',
 		ingredients: [
 			js13k.IngredientEmotion,
 			js13k.IngredientWarm,
@@ -97,20 +124,49 @@ js13k.Potion = {
 			'Can you bottle the feeling of\nwrapping yourself in a blanket?',
 		],
 		get alternatives() {
-			return [js13k.Potion.MeditativePotion];
+			return [
+				js13k.Potion.MeditativePotion,
+				js13k.Potion.WarmHealHead,
+			];
+		},
+	},
+
+	WarmHealHead: {
+		ingredients: [
+			js13k.IngredientEmotion,
+			js13k.IngredientLife,
+			js13k.IngredientWarm,
+		],
+		desc: [
+			'Warm and healing, but,\nlike, for the head',
+		],
+		get alternatives() {
+			return [js13k.Potion.TeeAndBlanketPotion];
 		},
 	},
 
 	AmplitudePotion: {
-		name: 'Amplitude Potion',
 		ingredients: [
+			js13k.IngredientEmotion,
 			js13k.IngredientCold,
 			js13k.IngredientWarm,
-			js13k.IngredientEmotion,
 		],
 		desc: [
-			'My emotions feel so... flat.\nI want to try how *more* feels like.',
+			'My emotions feel so... flat.\nGive me some swings.',
 			'Give me conflicting feelings.\nYou heard me.',
+		],
+	},
+
+	HotPotPotion: {
+		ingredients: [
+			js13k.IngredientEmotion,
+			js13k.IngredientCold,
+			js13k.IngredientWarm,
+			js13k.IngredientLife,
+		],
+		desc: [
+			'Make it a hotpot: Throw\na bit of everything in.',
+			'Make it shimmer in all\nthe colors you can!',
 		],
 	},
 

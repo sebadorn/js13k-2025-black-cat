@@ -12,12 +12,6 @@ js13k.CatBg = class extends js13k.LevelObject {
 		super( level, 800, 800 );
 
 		this.offsetY = 0;
-
-		// TODO: remove
-		/** @type {HTMLCanvasElement} */
-		this.cnv;
-		/** @type {CanvasRenderingContext2D} */
-		this.ctx;
 	}
 
 

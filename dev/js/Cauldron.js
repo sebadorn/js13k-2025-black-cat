@@ -11,12 +11,6 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	constructor( level ) {
 		super( level, 800, 650 );
 
-		// TODO: remove
-		/** @type {HTMLCanvasElement} */
-		this.cnv;
-		/** @type {CanvasRenderingContext2D} */
-		this.ctx;
-
 		/** @type {Ingredient[]} */
 		this.contents = [];
 

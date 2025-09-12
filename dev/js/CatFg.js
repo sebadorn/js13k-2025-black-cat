@@ -13,12 +13,6 @@ js13k.CatFg = class extends js13k.LevelObject {
 
 		this.state = js13k.CatFg.STATE_IDLE;
 		this.timer = 0;
-
-		// TODO: remove
-		/** @type {HTMLCanvasElement} */
-		this.cnv;
-		/** @type {CanvasRenderingContext2D} */
-		this.ctx;
 	}
 
 

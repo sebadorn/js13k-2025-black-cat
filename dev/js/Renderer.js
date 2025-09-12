@@ -150,7 +150,6 @@ js13k.Renderer = {
 			this.level.update( dt );
 			this.draw();
 
-			// TODO: remove
 			// Draw FPS info
 			this.ctx.fillStyle = '#fff';
 			this.ctx.font = '600 12px ' + js13k.FONT_MONO;

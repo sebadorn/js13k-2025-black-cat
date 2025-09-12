@@ -23,12 +23,6 @@ js13k.Button = class {
 		this.y = y;
 		this.w = w;
 		this.h = h;
-
-		// TODO: remove
-		/** @type {HTMLCanvasElement} */
-		this.cnv;
-		/** @type {CanvasRenderingContext2D} */
-		this.ctx;
 	}
 
 
@@ -445,7 +439,7 @@ js13k.Level = class {
 		}
 
 		// Info
-		if( potion.ingredients.length > 0 ) {
+		if( potion.ingredients.length > 0 && potion.ingredients.length < 4 ) {
 			ctx.font = '500 18px ' + js13k.FONT_SANS;
 			ctx.fillText( 'Ingredients: ' + potion.ingredients.length, x + 20, y + 60 );
 		}
@@ -521,18 +515,22 @@ js13k.Level = class {
 				js13k.Potion.Water,
 				js13k.Potion.CoolingPotion,
 				js13k.Potion.WarmingPotion,
+				js13k.Potion.ColdWithHot,
 			);
 
 			js13k.shuffle( list );
 		}
 		else if( stage == 2 ) {
-			timeLimit = 60;
+			timeLimit = 55;
 
 			list.push(
 				js13k.Potion.Water,
 				js13k.Potion.CoolingPotion,
 				js13k.Potion.WarmingPotion,
+				js13k.Potion.ColdWithHot,
 				js13k.Potion.HealthDrink,
+				js13k.Potion.FruitTea,
+				js13k.Potion.ColdWarmHealthy,
 				js13k.Potion.RefreshingEnergizer,
 				js13k.Potion.RefreshingEnergizer,
 			);
@@ -543,20 +541,25 @@ js13k.Level = class {
 			list.splice( 0, 0, js13k.Potion.HealthDrink );
 		}
 		else if( stage > 2 ) {
-			timeLimit = 60; // will get reduced further in `nextOrder()` depending on success so far
+			timeLimit = 55; // will get reduced further in `nextOrder()` depending on success so far
 
 			list.push(
 				js13k.Potion.Water,
 				js13k.Potion.CoolingPotion,
 				js13k.Potion.WarmingPotion,
+				js13k.Potion.ColdWithHot,
 				js13k.Potion.HealthDrink,
+				js13k.Potion.FruitTea,
+				js13k.Potion.ColdWarmHealthy,
 				js13k.Potion.RefreshingEnergizer,
 				js13k.Potion.CalmingPotion,
 				js13k.Potion.MeditativePotion,
 				js13k.Potion.MeditativePotion,
 				js13k.Potion.TeeAndBlanketPotion,
+				js13k.Potion.WarmHealHead,
 				js13k.Potion.AmplitudePotion,
 				js13k.Potion.AmplitudePotion,
+				js13k.Potion.HotPotPotion,
 			);
 
 			js13k.shuffle( list );
@@ -582,7 +585,6 @@ js13k.Level = class {
 	 */
 	_selectIngredient( ingredient ) {
 		this.cauldron.addContent( ingredient );
-		// js13k.Audio.play( js13k.Audio.drop, 0.3 );
 	}
 
 
@@ -601,9 +603,6 @@ js13k.Level = class {
 		this.ingredients = [
 			js13k.IngredientWarm,
 			js13k.IngredientCold,
-			// TODO: remove
-			js13k.IngredientEmotion,
-			js13k.IngredientLife,
 		];
 
 		if( newStage >= 2 ) {
@@ -877,7 +876,7 @@ js13k.Level = class {
 			setTimeout( () => js13k.Audio.play( js13k.Audio.meow ), 2000 );
 
 			this._animGoal = new js13k.Animation(
-				10,
+				12,
 				( progress, params ) => {
 					const w = 400;
 					const h = 150;
