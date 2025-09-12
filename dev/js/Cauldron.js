@@ -82,17 +82,17 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		}
 		else if( numIngs > 1 ) {
 			const check = [
-				['#000000', js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientEmotion, js13k.IngredientLife],
-				['#000000', js13k.IngredientWarm, js13k.IngredientLife, js13k.IngredientEmotion],
-				['#000000', js13k.IngredientCold, js13k.IngredientLife, js13k.IngredientEmotion],
-				['#000000', js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientEmotion],
-				['#000000', js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientLife],
-				['#614c6e', js13k.IngredientCold, js13k.IngredientWarm],
-				['#c1e61f', js13k.IngredientCold, js13k.IngredientLife],
-				['#10707c', js13k.IngredientCold, js13k.IngredientEmotion],
-				['#b9c427', js13k.IngredientWarm, js13k.IngredientLife],
-				['#ad1851', js13k.IngredientWarm, js13k.IngredientEmotion],
-				['#218118', js13k.IngredientLife, js13k.IngredientEmotion],
+				[js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientEmotion, js13k.IngredientLife],
+				[js13k.IngredientWarm, js13k.IngredientLife, js13k.IngredientEmotion],
+				[js13k.IngredientCold, js13k.IngredientLife, js13k.IngredientEmotion],
+				[js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientEmotion],
+				[js13k.IngredientCold, js13k.IngredientWarm, js13k.IngredientLife],
+				[js13k.IngredientCold, js13k.IngredientWarm],
+				[js13k.IngredientCold, js13k.IngredientLife],
+				[js13k.IngredientCold, js13k.IngredientEmotion],
+				[js13k.IngredientWarm, js13k.IngredientLife],
+				[js13k.IngredientWarm, js13k.IngredientEmotion],
+				[js13k.IngredientLife, js13k.IngredientEmotion],
 			];
 
 			/** @type {string[]} */
@@ -103,7 +103,7 @@ js13k.Cauldron = class extends js13k.LevelObject {
 				let isMatch = true;
 				colors = [];
 
-				for( let j = 1; j < entry.length; j++ ) {
+				for( let j = 0; j < entry.length; j++ ) {
 					if( !this.contents.includes( entry[j] ) ) {
 						isMatch = false;
 						break;
@@ -113,7 +113,6 @@ js13k.Cauldron = class extends js13k.LevelObject {
 				}
 
 				if( isMatch ) {
-					fluidColor = entry[0];
 					break;
 				}
 			}
@@ -128,12 +127,12 @@ js13k.Cauldron = class extends js13k.LevelObject {
 				b.push( parseInt( c.substring( 5, 7 ), 16 ) );
 			} );
 
-			const steps = colors.length;
 			this.colorTimer ??= new js13k.Timer( this.level, 2 );
 			this.colorStart ??= 0;
 			this.colorEnd ??= 1;
 
 			if( this.colorTimer.elapsed() ) {
+				const steps = colors.length;
 				this.colorStart = ++this.colorStart % steps;
 				this.colorEnd = ++this.colorEnd % steps;
 				this.colorTimer.set( 2 );
@@ -167,6 +166,10 @@ js13k.Cauldron = class extends js13k.LevelObject {
 
 		this.contents.push( ingredient );
 		this._needsRedraw = true;
+
+		this.colorTimer = null;
+		this.colorStart = null;
+		this.colorEnd = null;
 	}
 
 
@@ -239,6 +242,10 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	updateContent( newContent ) {
 		this.contents = newContent;
 		this._needsRedraw = true;
+
+		this.colorTimer = null;
+		this.colorStart = null;
+		this.colorEnd = null;
 	}
 
 
