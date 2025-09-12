@@ -133,7 +133,7 @@ js13k.Button = class {
 		ctx.drawImage( this.cnv, this.x, this.y );
 		ctx.globalAlpha = 1;
 
-		if( this.mouseover ) {
+		if( this.mouseover && text ) {
 			js13k.Level.drawMouseoverText( ctx, text, this.x + this.w / 2, this.y + this.h + 10 );
 		}
 	}
@@ -801,16 +801,25 @@ js13k.Level = class {
 	/**
 	 *
 	 * @param {number[]} pos - [x, y]
+	 * @returns {boolean}
 	 */
 	onMouseMove( pos ) {
-		if( this.stage == 0 || this.isGameOver ) {
-			return;
+		if( this.isGameOver ) {
+			return false;
 		}
 
+		let targetFound = false;
+
+		this.btnIntroStart.mouseover = false;
 		this.btnBottle.mouseover = false;
 		this.btnRestart.mouseover = false;
 
-		let targetFound = false;
+		if( this.stage == 0 ) {
+			targetFound = this.isInside( pos, this.btnIntroStart );
+			this.btnIntroStart.mouseover = targetFound;
+
+			return targetFound;
+		}
 
 		for( let i = 0; i < this.ingredients.length; i++ ) {
 			const ing = this.ingredients[i];
@@ -831,6 +840,8 @@ js13k.Level = class {
 			targetFound = true;
 			this.btnRestart.mouseover = true;
 		}
+
+		return targetFound;
 	}
 
 

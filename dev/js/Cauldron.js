@@ -18,6 +18,23 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		this._animAddIngredients = [];
 
 		[this.cnvFluid, this.ctxFluid] = js13k.Renderer.getOffscreenCanvas( this.w * 0.72, this.h * 0.28 );
+
+		const x = this.w / 2;
+		const y = this.h * 0.2 + 2;
+
+		this._gradient = this.ctx.createRadialGradient(
+			x, y + this.h * 0.37, this.h * 0.14,
+			x, y + this.h * 0.37, this.h * 0.82
+		);
+		this._gradient.addColorStop( 0, '#666' );
+		this._gradient.addColorStop( 1, '#444' );
+
+		this._gradientFire = this.ctx.createLinearGradient(
+			x, y + this.h,
+			x, y
+		);
+		this._gradientFire.addColorStop( 0, '#730' );
+		this._gradientFire.addColorStop( 0.5, '#ff000000' );
 	}
 
 
@@ -211,7 +228,6 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		js13k.Audio.play( js13k.Audio.drop );
 
 		this.contents.push( ingredient );
-		this._needsRedraw = true;
 
 		this.colorTimer = null;
 		this.colorStart = null;
@@ -230,21 +246,21 @@ js13k.Cauldron = class extends js13k.LevelObject {
 		const y = this.h * 0.2 + 2;
 		const same = [0, 0, Math.PI * 2];
 
-		const gradient = this.ctx.createRadialGradient(
-			x, y + this.h * 0.37, this.h * 0.14,
-			x, y + this.h * 0.37, this.h * 0.82
-		);
-		gradient.addColorStop( 0, '#666' );
-		gradient.addColorStop( 1, '#444' );
-
 		this.ctx.strokeStyle = '#444';
 		this.ctx.lineWidth = 4;
 
 		// big bottom
-		this.ctx.fillStyle = gradient;
+		this.ctx.fillStyle = this._gradient;
 		this.ctx.beginPath();
 		this.ctx.ellipse( x, y + this.h * 0.33, this.w * 0.5, this.h * 0.47, ...same );
 		this.ctx.fill();
+
+		this.ctx.fillStyle = this._gradientFire;
+		this.ctx.beginPath();
+		this.ctx.ellipse( x, y + this.h * 0.33, this.w * 0.5, this.h * 0.47, ...same );
+		this.ctx.fill();
+
+		this.ctx.fillStyle = this._gradient;
 
 		// upper rim
 		this.ctx.beginPath();
@@ -294,7 +310,6 @@ js13k.Cauldron = class extends js13k.LevelObject {
 	 */
 	updateContent( newContent ) {
 		this.contents = newContent;
-		this._needsRedraw = true;
 
 		this.colorTimer = null;
 		this.colorStart = null;

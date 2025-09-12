@@ -25,26 +25,6 @@ js13k.Renderer = {
 	scale: 1,
 
 
-	// /**
-	//  *
-	//  * @private
-	//  */
-	// _drawCursor() {
-	// 	// Use negative x value to indicate hidden cursor.
-	// 	if( this.cursor[0] < 0 ) {
-	// 		return;
-	// 	}
-
-	// 	let [x, y] = this.getScaledCursor();
-	// 	const w = this._cursorAsset.w;
-	// 	const h = this._cursorAsset.h;
-	// 	x = Math.round( x - w / 2 );
-	// 	y = Math.round( y - h / 6 );
-
-	// 	this._cursorAsset.draw( this.ctxUI, x, y );
-	// },
-
-
 	/**
 	 * Clear the canvas.
 	 */
@@ -62,7 +42,6 @@ js13k.Renderer = {
 		this.ctx.setTransform( this.scale, 0, 0, this.scale, 0, 0 );
 
 		this.level?.draw( this.ctx );
-		// this._drawCursor();
 	},
 
 
@@ -119,10 +98,6 @@ js13k.Renderer = {
 	init() {
 		[this.cnv, this.ctx] = this.getOffscreenCanvas();
 		document.body.append( this.cnv );
-
-		// /** @type {js13k.Asset} */
-		// this._cursorAsset = js13k.Assets.graphics.cursor;
-		// this._cursorAsset.render();
 
 		this.registerEvents();
 		this.resize();
@@ -193,10 +168,18 @@ js13k.Renderer = {
 			this.cursor[0] = ev.clientX - this.offset[0];
 			this.cursor[1] = ev.clientY - this.offset[1];
 
+			// Slow down mousemove event related actions for better performance.
 			if( !timeoutMove && !this.isPaused ) {
 				timeoutMove = setTimeout( () => {
-					this.level?.onMouseMove( this.getScaledCursor() );
+					const foundClickable = this.level?.onMouseMove( this.getScaledCursor() );
 					timeoutMove = null;
+
+					if( foundClickable ) {
+						this.cnv.classList.add( 'p' );
+					}
+					else {
+						this.cnv.classList.remove( 'p' );
+					}
 				}, 66 );
 			}
 		} );
