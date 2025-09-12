@@ -8,7 +8,8 @@ Theme: **Black Cat**
 
 ## Description
 
-The *Black Cat Potions* store just opened.  
+The **Black Cat Potions** store just opened!
+
 Figure out how to brew potions to fulfill the incoming orders.  
 Do well and you unlock new ingredients resulting in new kinds of orders.  
 But don't make too many mistakes or you can close your store.
@@ -17,7 +18,7 @@ But don't make too many mistakes or you can close your store.
 ## Controls
 
 * Mouse to point & click
-* `[Escape]` to pause
+* `[Esc]` to pause
 
 
 ## Resources
